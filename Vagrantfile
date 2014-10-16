@@ -23,7 +23,7 @@ def vagrant_command
 end
 
 def get_discovery_token
-  if coreos[:discovery_token] =~ /^new/
+  if coreos[:discovery_token].nil?
     begin
       coreos[:discovery_token] = Net::HTTP.get(URI.parse(coreos[:discovery_url]))
     rescue Exception => e

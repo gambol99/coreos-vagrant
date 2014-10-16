@@ -11,7 +11,7 @@
   :coreos_userdata  => "./config/cloudinit.yaml.erb",
   :network          => "10.0.1.%d",
   :instance_index   => 101,
-  :discovery_token  => 'https://discovery.etcd.io/7112e8cc77e425aeda54e1742da253ed',
+  :discovery_token  => nil,
   :discovery_url    => "https://discovery.etcd.io/new",
   :instance => {
     :name => "coreos",
