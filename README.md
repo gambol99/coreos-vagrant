@@ -1,0 +1,4 @@
+coreos-vagrant
+==============
+
+CoreOS Vagrant
