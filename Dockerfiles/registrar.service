@@ -1,0 +1,33 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-10-16 15:57:29 +0100 (Thu, 16 Oct 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=Docker Registrar
+After=etcd.service
+After=docker.service
+Requires=etcd.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker pull quay.io/gambol99/service-registrar:latest
+ExecStart=/usr/bin/docker run -P \
+-e LOGFILE=/opt/registrar/events.log
+-e INTERVAL=2000
+-e ETCD_HOST=$COREOS_PRIVATE_IPV4 \
+-e ENVIRONMENT=prod \
+-e APP=registrar-service \
+-e NAME=registrar \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v
+quay.io/gambol99/service-registrar:latest
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
