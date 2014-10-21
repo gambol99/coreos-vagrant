@@ -1,0 +1,26 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-10-21 15:48:34 +0100 (Tue, 21 Oct 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=Docker Registrar
+After=etcd.service
+After=docker.service
+Requires=etcd.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker pull redis:latest
+ExecStart=/usr/bin/docker run -P \
+-e ENVIRONMENT=prod \
+-e APP=redis \
+-e NAME=stats \
+redis
+
+[Install]
+WantedBy=multi-user.target
+

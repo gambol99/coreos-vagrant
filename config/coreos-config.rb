@@ -7,7 +7,7 @@
 @coreos = {
   :coreos_channel   => "alpha",
   :coreos_version   => ">= 308.0.1",
-  :coreos_instances => 2,
+  :coreos_instances => 3,
   :coreos_userdata  => "./config/cloudinit.yaml.erb",
   :network          => "10.0.1.%d",
   :instance_index   => 101,
@@ -17,6 +17,7 @@
     :name => "coreos",
     :url  => "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json",
     :resources => {
+      :gui          => false,
       :cpus         => 2,
       :memory       => 1024,
       :biosbootmenu => "disabled",

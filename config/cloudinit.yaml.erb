@@ -7,6 +7,13 @@ cat <<EOF >/var/lib/coreos-vagrant/vagrantfile-user-data
 #
 #  vim:ts=2:sw=2:et
 #
+write_files:
+  - path: /etc/hosts
+    permissions: 0444
+    owner: root
+    content: |
+      10.0.1.111    hub101 hub
+
 coreos:
   etcd:
     discovery: <%=discovery_token%>
