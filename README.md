@@ -1,6 +1,8 @@
 CoreOS Vagrant
 ==============
 
+A vagrant development environment for playing about with CoreOS
+
 Config
 --------
 
@@ -34,15 +36,15 @@ Setup
 
     [jest@starfury coreos-vagrant]$ vagrant status
     Current machine states:
-  
+
     core101                   not created (virtualbox)
     core102                   not created (virtualbox)
     core103                   not created (virtualbox)
-  
+
     This environment represents multiple VMs. The VMs are all listed
     above with their current state. For more information about a specific
     VM, run `vagrant status NAME`.
-  
+
     [jest@starfury coreos-vagrant]$ vagrant up
 
 
