@@ -24,7 +24,6 @@ write_files:
 
 coreos:
   etcd:
-    name: <%=@hostname%>
     discovery: <%=discovery_token%>
     addr: \$public_ipv4:4001
     peer-addr: \$public_ipv4:7001
