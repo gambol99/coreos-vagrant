@@ -46,14 +46,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   discovery_token if vagrant_command =~ /(up|provision)/
   coreos[:coreos_instances].times.each.with_index(coreos[:instance_index]) do |x,index|
     @hostname = "core#{index}"
-    config.vm.define hostname do |x|
+    config.vm.define @hostname do |x|
       x.vm.box       = "coreos-#{coreos[:coreos_channel]}"
       x.vm.box_url   = "#{coreos[:instance][:url]}" % [ coreos[:coreos_channel] ]
-      x.vm.host_name = hostname
+      x.vm.host_name = @hostname
       x.vm.network :private_network, ip: "#{coreos[:network]}" % [ index ]
       x.vm.provider :virtualbox do |v|
         v.gui   = false
-        v.name  = hostname
+        v.name  = @hostname
         coreos[:instance][:resources].each_pair do |key,value|
           v.customize [ "modifyvm", :id, "--#{key}", value ]
         end
