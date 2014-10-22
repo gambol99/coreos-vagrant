@@ -11,15 +11,14 @@
   :coreos_userdata  => "./config/cloudinit.yaml.erb",
   :network          => "10.0.1.%d",
   :instance_index   => 101,
-  :discovery_token  => nil,
+  :discovery_token  => "https://discovery.etcd.io/ceaefbd9f7f4c5e649c45563049e2df4",
   :discovery_url    => "https://discovery.etcd.io/new",
   :instance => {
     :name => "coreos",
     :url  => "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json",
     :resources => {
-      :gui          => false,
       :cpus         => 2,
-      :memory       => 1024,
+      :memory       => 2048,
       :biosbootmenu => "disabled",
     }
   }

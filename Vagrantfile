@@ -53,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       x.vm.host_name = hostname
       x.vm.network :private_network, ip: "#{coreos[:network]}" % [ index ]
       x.vm.provider :virtualbox do |v|
-        v.gui   = true
+        v.gui   = false
         v.name  = hostname
         coreos[:instance][:resources].each_pair do |key,value|
           v.customize [ "modifyvm", :id, "--#{key}", value ]
