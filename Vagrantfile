@@ -13,7 +13,6 @@ require 'config/coreos-config'
 VAGRANTFILE_API_VERSION = "2"
 USERDATA = 'config/cloudinit.yaml.erb'
 
-
 def discovery_token
   @discovery_token ||= get_discovery_token
 end
@@ -46,7 +45,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # step: do we need a discovery code?
   discovery_token if vagrant_command =~ /(up|provision)/
   coreos[:coreos_instances].times.each.with_index(coreos[:instance_index]) do |x,index|
-    hostname = "core#{index}"
+    @hostname = "core#{index}"
     config.vm.define hostname do |x|
       x.vm.box       = "coreos-#{coreos[:coreos_channel]}"
       x.vm.box_url   = "#{coreos[:instance][:url]}" % [ coreos[:coreos_channel] ]

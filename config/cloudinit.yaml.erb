@@ -12,10 +12,19 @@ write_files:
     permissions: 0444
     owner: root
     content: |
-      10.0.1.111    hub101 hub
+      10.0.1.112    hub101 hub
+  - path: /etc/coreos.environment
+    permissions: 0444
+    owner: root
+    content: |
+      DC: dev
+      DEFAULT_ENVIRONMENT=prod
+      DEFAULT_APP=unknown
+      DEFAULT_NAME=unknown
 
 coreos:
   etcd:
+    name: <%=@hostname%>
     discovery: <%=discovery_token%>
     addr: \$public_ipv4:4001
     peer-addr: \$public_ipv4:7001

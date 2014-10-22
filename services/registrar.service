@@ -14,19 +14,18 @@ Requires=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=0
-ExecStartPre=/usr/bin/docker pull quay.io/gambol99/service-registrar:latest
-ExecStart=/usr/bin/docker run -P \
+#ExecStartPre=/usr/bin/docker pull quay.io/gambol99/service-registrar:latest
+ExecStartPre=/usr/bin/docker pull hub:5000/service-registrar:latest
+ExecStart=/usr/bin/docker run \
 -e ENVIRONMENT=prod \
 -e APP=registrar-service \
 -e NAME=registrar \
 -e INTERVAL=3000 \
--e HOST=$HOSTNAME \
--e ETCD_HOST=$COREOS_PRIVATE_IPV4 \
--e ETCD_PORT=4001 \
--e IPADDRESS=$COREOS_PRIVATE_IPV4 \
+-e HOST=${COREOS_PRIVATE_IPV4} \
+-e ETCD_HOST=${COREOS_PRIVATE_IPV4} \
+-e IPADDRESS=${COREOS_PRIVATE_IPV4} \
 -e DOCKER_SOCKET=/var/sockets/docker.sock \
--v /var/run:/var/sockets \
--v /etc/environment:/etc/environment quay.io/gambol99/service-registrar:latest
+-v /var/run:/var/sockets hub:5000/service-registrar:latest
 
 [Install]
 WantedBy=multi-user.target
