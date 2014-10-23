@@ -26,7 +26,7 @@ ExecStart=/usr/bin/bash -c "/usr/bin/docker run \
 -p ${COREOS_PRIVATE_IPV4}:8400:8400 \
 -p ${COREOS_PRIVATE_IPV4}:8500:8500 \
 -p 172.17.42.1:53:53/udp \
-progrium/consul -server -advertise ${COREOS_PRIVATE_IPV4} -join `etcdctl get /consul/bootstrap`"
+progrium/consul -server -advertise ${COREOS_PRIVATE_IPV4} -join `etcdctl get /consul/root_bridge`"
 
 # Stop
 ExecStop=/usr/bin/docker stop consul.%i.slave

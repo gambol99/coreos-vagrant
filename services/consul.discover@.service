@@ -1,0 +1,15 @@
+[Unit]
+Description=Consul Discovery Service
+BindsTo=consul@%i.service
+
+[Service]
+ExecStart=/usr/bin/bash -c "\
+  while true; do \
+    etcdctl set /consul/%H --ttl 30 \
+    sleep 20; \
+  done;"
+
+ExecStop=/usr/bin/etcdctl rm /consul/%H
+
+[X-Fleet]
+X-ConditionMachineOf=consul@%i.service
