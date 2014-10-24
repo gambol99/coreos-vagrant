@@ -208,7 +208,8 @@ dir /data
 #    network partition slaves automatically try to reconnect to masters
 #    and resynchronize with them.
 #
-# slaveof <masterip> <masterport>
+{{range service "master.redis@dc1:6379"}}
+slaveof {{.Address}} {{.Port}}{{end}}
 
 # If the master is password protected (using the "requirepass" configuration
 # directive below) it is possible to tell the slave to authenticate before

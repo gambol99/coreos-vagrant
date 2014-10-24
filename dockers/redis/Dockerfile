@@ -31,7 +31,8 @@ RUN \
 
 VOLUME ["/data"]
 WORKDIR /data
-ADD consul/conf.d/redis.conf /etc/consul/conf.d/redis.conf
 ADD consul/templates/redis.conf.tpl /etc/consul/templates/redis.conf.tpl
+ENV CONSUL_ONETIME_REDIS redis.conf.tpl:/etc/redis/redis.conf:/usr/bin/true
+ENV CONSUL_SERVICE_REDIS redis.conf.tpl:/etc/redis/redis.conf:/usr/bin/supervisorctl reload runner
 CMD [ "/usr/local/bin/redis-server", "/etc/redis/redis.conf" ]
 EXPOSE 6379
