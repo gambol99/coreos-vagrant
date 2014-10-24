@@ -60,6 +60,13 @@ Asumming you've built the fleetctl cli and place it into the PATH
     789ec339... 10.0.1.102  -
     ba95766b... 10.0.1.101  -
 
+
+Services
+--------
+
+
+
+
 Issues
 --------
 

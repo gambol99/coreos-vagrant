@@ -5,7 +5,7 @@
 #  vim:ts=2:sw=2:et
 #
 [Unit]
-Description=Redis Master Service
+Description=Redis Slave Service
 After=etcd.service
 After=docker.service
 Requires=etcd.service
@@ -16,8 +16,8 @@ EnvironmentFile=/etc/environment
 TimeoutStartSec=0
 ExecStartPre=/usr/bin/docker pull redis:latest
 ExecStart=/usr/bin/docker run -P \
--e SERVICE_NAME=statistics_master \
--e SERVICE_TAGS=redis,master \
+-e SERVICE_NAME=statistics \
+-e SERVICE_TAGS=redis,slave \
 -e SERVICE_REGION=dc1" \
 -e ENVIRONMENT=prod \
 -e APP=redis \
@@ -26,4 +26,5 @@ redis
 
 [Install]
 WantedBy=multi-user.target
+X-Conflicts=redis-slave@*.service
 X-Conflicts=redis-master.service
