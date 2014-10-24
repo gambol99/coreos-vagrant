@@ -8,8 +8,8 @@ After=docker.service
 [Service]
 KillMode=none
 EnvironmentFile=/etc/environment
-ExecStartPre=/usr/bin/docker kill consul-master
-ExecStartPre=/usr/bin/docker rm consul-master
+ExecStartPre=-/usr/bin/docker kill consul-master
+ExecStartPre=-/usr/bin/docker rm consul-master
 ExecStartPre=/usr/bin/docker pull progrium/consul
 ExecStartPre=/usr/bin/etcdctl set /consul/bootstrap ${COREOS_PRIVATE_IPV4}
 ExecStart=/usr/bin/bash -c "/usr/bin/docker run \
