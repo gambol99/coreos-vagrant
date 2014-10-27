@@ -4,7 +4,7 @@
 #
 #  vim:ts=2:sw=2:et
 #
-FROM gambol99/ubuntu-base:latest
+FROM quay.io/gambol99/ubuntu-base:latest
 MAINTAINER <gambol99@gmail.com>
 RUN wget https://github.com/hashicorp/consul-template/releases/download/v0.1.0/consul-template_0.1.0_linux_amd64.tar.gz -O /tmp/consul-template_0.1.0_linux_amd64.tar.gz && \
   tar zxvf /tmp/consul-template_0.1.0_linux_amd64.tar.gz -C /tmp && \
