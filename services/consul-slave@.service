@@ -12,7 +12,7 @@ KillMode=none
 EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker kill consul.%i.slave
 ExecStartPre=-/usr/bin/docker rm consul.%i.slave
-ExecStartPre=/usr/bin/docker pull progrium/consul
+ExecStartPre=/usr/bin/docker pull progrium/consul:latest
 ExecStart=/usr/bin/bash -c "/usr/bin/docker run \
 --name consul.%i.slave \
 -e ENVIRONMENT=prod \
