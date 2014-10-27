@@ -10,8 +10,7 @@
 # REDIS_MASTER=[CONSUL_SERVICE]
 #
 #
-
-FROM gambol99/service:latest
+FROM quay.io/gambol99/service:latest
 MAINTAINER <gambol99@gmail.com>
 RUN \
   cd /tmp && \
