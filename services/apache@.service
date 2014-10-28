@@ -25,15 +25,14 @@ EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker kill apache.%i
 ExecStartPre=-/usr/bin/docker rm apache.%i
 ExecStartPre=/usr/bin/docker pull eboraas/apache:latest
-ExecStart=/usr/bin/docker run \
+ExecStart=/usr/bin/docker run -P \
 -e ENVIRONMENT=prod \
 -e APP=apache \
 -e NAME=frontend \
--e SERVICE_NAME=apache1 \
--e SERVICE_TAGS=apache,frontend \
--e SERVICE_REGION=dc1" \
+-e SERVICE_80_NAME=apache_frontend_http \
+-e SERVICE_443_NAME=apache_frontend_https \
+-e SERVICE_TAGS=apache,frontend,web \
 --name apache.%i \
--p ${COREOS_PRIVATE_IPV4}:%i:80 \
 eboraas/apache \
 /usr/sbin/apache2ctl -D FOREGROUND
 
@@ -42,4 +41,4 @@ ExecStop=/usr/bin/docker stop apache.%i
 
 [X-Fleet]
 # Don't schedule on the same machine as other Apache instances
-X-Conflicts=apache@*.service
+#X-Conflicts=apache@*.service
