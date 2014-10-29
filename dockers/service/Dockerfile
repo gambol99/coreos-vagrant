@@ -4,17 +4,16 @@
 #
 #  vim:ts=2:sw=2:et
 #
-FROM quay.io/gambol99/ubuntu-base:latest
+FROM gambol99/ubuntu-base:latest
 MAINTAINER <gambol99@gmail.com>
-RUN wget https://github.com/hashicorp/consul-template/releases/download/v0.1.0/consul-template_0.1.0_linux_amd64.tar.gz -O /tmp/consul-template_0.1.0_linux_amd64.tar.gz && \
-  tar zxvf /tmp/consul-template_0.1.0_linux_amd64.tar.gz -C /tmp && \
-  mv /tmp/consul-template_0.1.0_linux_amd64/consul-template /usr/bin/consul-template && \
-  rm -rf /tmp/consul-template_0.1.0_linux_amd64 /tmp/consul-template_0.1.0_linux_amd64.tar.gz && \
-  chmod +x /usr/bin/consul-template
+
+RUN sudo wget http://github.com/kelseyhightower/confd/releases/download/v0.6.3/confd-0.6.3-linux-amd64 -O /usr/bin/confd && chmod +x /usr/bin/confd
 RUN mkdir -p \
   /dockerbase \
-  /etc/consul/conf.d \
-  /etc/consul/templates \
+  /etc/confd/onetime/conf.d \
+  /etc/confd/onetime/templates \
+  /etc/confd/conf.d \
+  /etc/confd/templates \
   /etc/supervisor/conf.d
 RUN rm -f /etc/cron.daily/standard
 ADD runner.sh /runner.sh

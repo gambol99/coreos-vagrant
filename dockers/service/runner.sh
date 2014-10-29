@@ -6,23 +6,20 @@
 #  vim:ts=2:sw=2:et
 #
 
-CONSUL_BIN="/usr/bin/consul-template"
-CONSUL_HOST=${CONSUL_HOST:-consul.consul}
-CONSUL_BASE=${CONSUL_CONFD:-/etc/consul}
-CONSUL_CONFD="${CONSUL_BASE}/conf.d"
-CONSUL_CONFIG=${CONSUL_CONFIG:-""}
-CONSUL_TEMPLATES=${CONSUL_TEMPLATES:-""}
-
-CONSUL_SERVICE=${CONSUL_SERVICE_PREFIX:-"SERVICE"}
-CONSUL_ONETIME=${CONSUL_ONETIME_PREFIX:-"ONETIME"}
-CONSUL_SERVICES="CONSUL_(${CONSUL_SERVICE}|${CONSUL_ONETIME})_"
+CONFD_BIN="/usr/bin/confd"
+CONFD_HOST=${CONFD_HOST:-"127.0.0.1:4001"}
+CONFD_BASE=${CONFD_CONFD:-/etc/confd}
+CONFD_BASE_ONETIME=${CONFD_BASE}/onetime
+CONFD_CONFD="${CONFD_BASE}/conf.d"
+SUPERVISORD=/usr/bin/supervisord
 
 annonce() {
   echo "** $@"
   echo
 }
 
-supervisor_setup() {
+runner_service() {
+  annonce "Adding the runner service to supervisord"
   cat <<EOF > /etc/supervisor/conf.d/runner.conf
 [program:runner]
 user=root
@@ -36,77 +33,41 @@ EOF
   cat /etc/supervisor/conf.d/runner.conf
 }
 
-consul_onetime() {
-  [[ "$@" =~ ^CONSUL_${CONSUL_ONETIME}_.*$ ]] && return 0 || return 1
-}
-
-consul_service() {
-  [[ "$@" =~ ^CONSUL_${CONSUL_SERVICE}_.*$ ]] && return 0 || return 1
-}
-#
-# CONSUL_SERVICE_<NAME>   : these are added the consul daemon service
-# CONSUL_ONETIME_<NAME>   : these are run just once; and are normally used to grab the initial configuration
-#
-consul_services() {
-  annonce "Setting up the Consul Service"
-  # step: generate a list of templates to use
-  while IFS='=' read NAME CONFIG; do
-    # step: verify the format
-    if [[ "$CONFIG" =~ ^(.*):(.*):(.*)$ ]]; then
-      # step: check the template exists
-      template_file="/etc/consul/templates/${BASH_REMATCH[1]}"
-      destination=${BASH_REMATCH[2]}
-      reload=${BASH_REMATCH[3]}
-      [ -f "$template_file" ] || {
-        annonce "Error; the template file: $template_file does not exist";
-        continue;
-      }
-      # step: check if it's a onetime
-      if consul_onetime "$NAME"; then
-        template="${template_file}:${destination}:${reload}"
-        annonce "Consul Onetime Configuration: $template"
-        if ! $CONSUL_BIN -consul $CONSUL_HOST -once -template $template; then
-          annonce "Failed to perform onetime configuration: $template, exit code: $?"
-        else
-          annonce "Successfully ran onetime configuration: $template"
-        fi
-      else
-        template="\"${template_file}:${destination}:${reload}\""
-        annonce "Adding the consul service template: $template"
-        CONSUL_TEMPLATES=" $CONSUL_TEMPLATES -template $template"
-      fi
-    else
-      annonce "Error; the template: $CONFIG is invalid, should be <template>:<dest>:<reload>"
-    fi
-  done < <(set | egrep "^${CONSUL_SERVICES}.*=.*$" | sed "s/'//g")
-}
-
-consul_setup() {
-  # step: read in the templates
-  consul_services
-  # step: add the supervisord config for consul if were not empty
-  if [ -n "$CONSUL_TEMPLATES" ]; then
-cat <<EOF > /etc/supervisor/conf.d/consul.conf
-[program:consul]
+confd_service() {
+  cat <<EOF > /etc/supervisor/conf.d/confd.conf
+[program:confd]
 user=root
-directory=${CONSUL_BASE}
-command=${CONSUL_BIN} -consul ${CONSUL_HOST} ${CONSUL_TEMPLATES}
+directory=${CONFD_BASE}
+command=${CONFD_BIN} -confdir ${CONFD_BASE} -node ${CONFD_HOST} -verbose
 stdout_logfile=/var/log/supervisor/%(program_name)s.log
 stderr_logfile=/var/log/supervisor/%(program_name)s_error.log
 EOF
-    annonce "Consul Template Configuration"
-    cat /etc/supervisor/conf.d/consul.conf
+}
+
+confd_setup() {
+  # step: perform any onetime confd runs
+  confd_onetime
+  # step: add the supervisord config for confd if were not empty
+  CONFD_TEMPLATES=$(find /etc/confd/conf.d -type f | wc -l)
+  if [ ! "$CONFD_TEMPLATES" == "0" ]; then
+    annonce "Adding the Confd Service to supervisord"
+    confd_service
   else
-    annonce "We have no consul templates to add"
+    annonce "We have no CONFD templates to add"
   fi
 }
 
+confd_onetime() {
+  annonce "Performing onetime confd runs"
+  ${CONFD_BIN} -confdir ${CONFD_BASE_ONETIME} -node ${CONFD_HOST} -verbose
+  [ $? -ne 0 ] || annonce "We encountered an error performing the onetime run"
+}
+
 services_setup() {
-  annonce "Setting up the background services"
-  # step: generate the consul services
-  consul_setup
-  # step: generate the supervisord setup
-  supervisor_setup "${COMMAND_ARGS}"
+  # step: setup the confd services
+  confd_setup
+  # step: setup the supervisord setup
+  runner_service "${COMMAND_ARGS}"
 }
 
 # step: grab the command line arguments
@@ -117,7 +78,7 @@ services_setup
 
 if ! [[ "${COMMAND_ARGS}" =~ ^/(usr/|)bin/(bash|sh|zsh).*$ ]]; then
   annonce "Starting the supervisord daemon service"
-  /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n
+  $SUPERVISORD -c /etc/supervisor/supervisord.conf -n
 else
   annonce "Switching into a shell"
   # step: it's a shell

@@ -14,20 +14,23 @@ Requires=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=0
-ExecStartPre=/usr/bin/docker pull quay.io/gambol99/service-registrar:latest
-#ExecStartPre=/usr/bin/docker pull hub:5000/service-registrar:latest
-ExecStart=/usr/bin/docker run -ti --rm \
+ExecStartPre=-/usr/bin/docker kill registrar
+ExecStartPre=-/usr/bin/docker rm registrar
+#ExecStartPre=/usr/bin/docker pull quay.io/gambol99/service-registrar:latest
+ExecStartPre=/usr/bin/docker pull hub:5000/service-registrar:latest
+ExecStart=/usr/bin/docker run --name registrar \
 -e ENVIRONMENT=prod \
--e APP=registrar-service \
+-e APP=registrar \
 -e NAME=registrar \
 -e INTERVAL=3000 \
 -e HOST=${COREOS_PRIVATE_IPV4} \
--e BACKEND=consul://${COREOS_PRIVATE_IPV4}:8500 \
+-e BACKEND=etcd://${COREOS_PRIVATE_IPV4}:4001 \
 -e IPADDRESS=${COREOS_PRIVATE_IPV4} \
 -e DOCKER_SOCKET=/var/sockets/docker.sock \
--v /var/run:/var/sockets quay.io/gambol99/service-registrar:latest
-#-v /var/run:/var/sockets hub:5000/service-registrar:latest
+-v /var/run:/var/sockets hub:5000/service-registrar:latest
+#-v /var/run:/var/sockets quay.io/gambol99/service-registrar:latest
 
+ExecStop=/usr/bin/docker stop registrar
 
 [Install]
 WantedBy=multi-user.target

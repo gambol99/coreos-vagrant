@@ -16,14 +16,13 @@ EnvironmentFile=/etc/environment
 TimeoutStartSec=0
 ExecStartPre=/usr/bin/docker pull redis:latest
 ExecStart=/usr/bin/docker run -P \
--e SERVICE_NAME=redis \
--e SERVICE_TAGS=master \
--e SERVICE_REGION=dc1" \
 -e ENVIRONMENT=prod \
 -e APP=redis \
 -e NAME=stats \
-redis
+-e SERVICE_6379_NAME=redis \
+-e TAGS=redis-master \
+redis:latest
 
 [Install]
 WantedBy=multi-user.target
-X-Conflicts=redis-master.service
+X-Conflicts=redis.service
