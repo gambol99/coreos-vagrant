@@ -13,7 +13,7 @@ ExecStartPre=-/usr/bin/docker rm consul-master
 ExecStartPre=/usr/bin/docker pull progrium/consul:latest
 ExecStartPre=/usr/bin/etcdctl set /consul/bootstrap ${COREOS_PRIVATE_IPV4}
 ExecStart=/usr/bin/bash -c "/usr/bin/docker run \
---name consul-master \
+--name consul-master.service \
 -e ENVIRONMENT=prod \
 -e APP=consul \
 -e NAME=consul-master \
@@ -32,4 +32,4 @@ ExecStop=/usr/bin/docker stop consul-master
 ExecStop=/usr/bin/etcdctl rm /consul/bootstrap
 
 [X-Fleet]
-X-Conflicts=consul-master.service
+X-Conflicts=consul-master.*.service
