@@ -1,0 +1,33 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-11-27 16:40:25 +0000 (Thu, 27 Nov 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=Vulcand HTTP Router %i
+
+Requires=etcd.service
+Requires=docker.service
+After=etcd.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill vulcand.%i
+ExecStartPre=-/usr/bin/docker rm vulcand.%i
+ExecStartPre=/usr/bin/docker pull mailgun/vulcand
+ExecStart=/usr/bin/docker run -P \
+--name vulcand.%i \
+-e ENVIRONMENT=prod \
+-e NAME=vulcand \
+-e Tags="prod,vulcand" \
+mailgun/vulcand /go/bin/vulcand -apiInterface=0.0.0.0 --etcd=http://${COREOS_PRIVATE_IPV4}:4001
+
+ExecStop=/usr/bin/docker stop vulcand.%i
+
+[Install]
+WantedBy=multi-user.target
+X-Conflicts=vulcand.*.service

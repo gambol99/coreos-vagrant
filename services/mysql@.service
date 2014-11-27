@@ -1,0 +1,25 @@
+[Unit]
+Description=Mysql Service %i
+
+Requires=etcd.service
+Requires=docker.service
+After=etcd.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill mysql.%i
+ExecStartPre=-/usr/bin/docker rm mysql.%i
+ExecStartPre=/usr/bin/docker pull mysql
+ExecStart=/usr/bin/docker run -P \
+--name mysql.%i \
+-e ENVIRONMENT=prod \
+-e NAME=mysql \
+-e Tags="db,master" \
+-e MYSQL_ROOT_PASSWORD=mysql \
+mysql
+
+ExecStop=/usr/bin/docker stop mysql.%i

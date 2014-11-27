@@ -16,7 +16,7 @@ EnvironmentFile=/etc/environment
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill embassy.proxy
 ExecStartPre=-/usr/bin/docker rm embassy.proxy
-ExecStartPre=sudo chown og+rw /var/run/docker.sock
+ExecStartPre=-/usr/bin/chown og+rw /var/run/docker.sock
 ExecStartPre=/usr/bin/docker pull quay.io/gambol99/embassy:latest
 ExecStart=/usr/bin/docker run --privileged=true --net=host \
 --name embassy.proxy \
@@ -24,7 +24,7 @@ ExecStart=/usr/bin/docker run --privileged=true --net=host \
 -e NAME=embassy \
 -e INTERFACE=enp0s8 \
 -e DISCOVERY=etcd://${COREOS_PRIVATE_IPV4}:4001 \
--e VERBOSITY=10 \
+-e VERBOSITY=2 \
 -v /var/run/docker.sock:/var/run/docker.sock quay.io/gambol99/embassy:latest
 
 ExecStop=/usr/bin/docker stop embassy.proxy
