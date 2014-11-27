@@ -14,11 +14,11 @@ Requires=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill embassy.%i.proxy
-ExecStartPre=-/usr/bin/docker rm embassy.%i.proxy
+ExecStartPre=-/usr/bin/docker kill embassy.proxy
+ExecStartPre=-/usr/bin/docker rm embassy.proxy
 ExecStartPre=/usr/bin/docker pull quay.io/gambol99/embassy:latest
 ExecStart=/usr/bin/docker run -P \
--n embassy.%i.proxy \
+-n embassy.proxy \
 -e ENVIRONMENT=prod \
 -e NAME=embassy \
 -e DISCOVERY=etcd://${COREOS_PRIVATE_IPV4}:4001 \
@@ -26,3 +26,6 @@ quay.io/gambol99/embassy:latest
 
 [Install]
 WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
