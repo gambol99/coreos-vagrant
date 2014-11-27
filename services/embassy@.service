@@ -1,0 +1,28 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-11-24 16:15:17 +0000 (Mon, 24 Nov 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=Embassy Proxy Service
+After=etcd.service
+After=docker.service
+Requires=etcd.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill embassy.%i.proxy
+ExecStartPre=-/usr/bin/docker rm embassy.%i.proxy
+ExecStartPre=/usr/bin/docker pull quay.io/gambol99/embassy:latest
+ExecStart=/usr/bin/docker run -P \
+-n embassy.%i.proxy \
+-e ENVIRONMENT=prod \
+-e NAME=embassy \
+-e DISCOVERY=etcd://${COREOS_PRIVATE_IPV4}:4001 \
+quay.io/gambol99/embassy:latest
+
+[Install]
+WantedBy=multi-user.target

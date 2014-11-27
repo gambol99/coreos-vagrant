@@ -4,10 +4,11 @@
 #
 #  vim:ts=2:sw=2:et
 #
-FROM centos
+FROM ubuntu
 MAINTAINER <gambol99@gmail.com>
-ADD stage/startup.sh /startup.sh
-RUN curl -ksL https://github.com/gambol99/embassy/releases/download/v0.0.1/embassy-v0.0.1 -o /bin/embassy
-RUN chmod +x /startup.sh
-RUN chmod +x /bin/embassy
+
+ADD ./stage/startup.sh ./startup.sh
+RUN apt-get update && apt-get install -y iptables
+RUN curl -ksL https://github.com/gambol99/embassy/releases/download/v0.0.2/embassy-v0.0.2 -o /bin/embassy
+RUN chmod +x /startup.sh; chmod +x /bin/embassy
 ENTRYPOINT [ "/startup.sh" ]
