@@ -26,13 +26,9 @@ ExecStartPre=-/usr/bin/docker kill apache.%i
 ExecStartPre=-/usr/bin/docker rm apache.%i
 ExecStartPre=/usr/bin/docker pull eboraas/apache:latest
 ExecStart=/usr/bin/docker run -P \
--e ENVIRONMENT=prod \
--e APP=apache \
--e NAME=frontend \
--e SERVICE_80_NAME=apache_frontend_http \
--e SERVICE_443_NAME=apache_frontend_https \
--e SERVICE_TAGS=apache,frontend,web \
 --name apache.%i \
+-e ENVIRONMENT=prod \
+-e NAME=frontend \
 eboraas/apache \
 /usr/sbin/apache2ctl -D FOREGROUND
 
