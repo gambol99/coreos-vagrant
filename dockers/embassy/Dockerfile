@@ -8,6 +8,6 @@ FROM centos
 MAINTAINER <gambol99@gmail.com>
 
 ADD ./stage/startup.sh ./startup.sh
-RUN curl -ksL https://github.com/gambol99/embassy/releases/download/v0.0.3/embassy-v0.0.3 -o /bin/embassy
+RUN curl -ksL https://github.com/gambol99/embassy/releases/download/v0.0.3-hfx.0/embassy-v0.0.3-hfx.0 -o /bin/embassy
 RUN chmod +x /startup.sh; chmod +x /bin/embassy
 ENTRYPOINT [ "/startup.sh" ]
