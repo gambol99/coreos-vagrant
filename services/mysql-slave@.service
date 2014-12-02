@@ -1,0 +1,43 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-11-28 15:01:22 +0000 (Fri, 28 Nov 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=MySQL Slave %p %i
+
+Requires=etcd.service
+Requires=docker.service
+After=etcd.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill mysql.slave.%p.%i
+ExecStartPre=-/usr/bin/docker rm mysql.slave.%p.%i
+ExecStartPre=/usr/bin/docker pull tutum/mysql
+ExecStart=/usr/bin/docker run -P \
+--add-host mysql:172.17.42.1 \
+--name mysql.slave.%p.%i \
+-e ENVIRONMENT=prod \
+-e NAME=mysql.slave.%p \
+-e Tags="prod,mysql,slave" \
+-e MYSQL_PORT_3306_TCP_ADDR=172.17.42.1  \
+-e MYSQL_PORT_3306_TCP_PORT=3306 \
+-e MYSQL_PASS=mysql \
+-e REPLICATION_SLAVE=true \
+-e MYSQL_ENV_REPLICATION_USER=replication \
+-e MYSQL_ENV_REPLICATION_PASS=8d67as9f7sjhsdfsd \
+-e BACKEND_MYSQL_MASTER='services/prod/mysql.master.%p/3306;3306/tcp' \
+tutum/mysql
+
+ExecStop=/usr/bin/docker stop mysql.slave.%p.%i
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Conflicts=mysql.(slave|master).%p.*

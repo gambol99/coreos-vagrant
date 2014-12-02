@@ -1,0 +1,39 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-11-28 15:01:17 +0000 (Fri, 28 Nov 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=MySQL Master %p %i
+
+Requires=etcd.service
+Requires=docker.service
+After=etcd.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill mysql.master.%p.%i
+ExecStartPre=-/usr/bin/docker rm mysql.master.%p.%i
+ExecStartPre=/usr/bin/docker pull tutum/mysql
+ExecStart=/usr/bin/docker run -P \
+--name mysql.master.%p.%i \
+-e ENVIRONMENT=prod \
+-e NAME=mysql.master.%p \
+-e Tags="prod,mysql,master" \
+-e MYSQL_PASS=mysql \
+-e REPLICATION_MASTER=true \
+-e REPLICATION_USER=replication \
+-e REPLICATION_PASS=8d67as9f7sjhsdfsd \
+tutum/mysql
+
+ExecStop=/usr/bin/docker stop mysql.master.%p.%i
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Conflicts=mysql.slave.%p.*

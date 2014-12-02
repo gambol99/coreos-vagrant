@@ -1,0 +1,32 @@
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-10-21 15:48:34 +0100 (Tue, 21 Oct 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=Redis %i %p
+
+# Requirements
+Requires=etcd.service
+Requires=docker.service
+
+# Dependency ordering
+After=etcd.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill redis.%i.%p
+ExecStartPre=-/usr/bin/docker rm redis.%i.%p
+ExecStartPre=/usr/bin/docker pull redis
+ExecStart=/usr/bin/docker run -P \
+--name redis.%i.%p \
+-e ENVIRONMENT=prod \
+-e NAME=redis.%p \
+redis
+
+# Stop
+ExecStop=/usr/bin/docker stop redis.%i.%p
