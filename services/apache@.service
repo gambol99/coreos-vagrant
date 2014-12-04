@@ -28,6 +28,8 @@ ExecStartPre=/usr/bin/docker pull quay.io/gambol99/apache-php:latest
 ExecStart=/usr/bin/docker run -P \
 --name apache.%i \
 -e ENVIRONMENT=prod \
+-e SERVICE_80_NAME=apache_http \
+-e SERVICE_443_NAME=apache_https \
 -e NAME=frontend \
 quay.io/gambol99/apache-php:latest \
 /usr/sbin/apache2ctl -D FOREGROUND

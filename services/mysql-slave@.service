@@ -31,7 +31,7 @@ ExecStart=/usr/bin/docker run -P \
 -e REPLICATION_SLAVE=true \
 -e MYSQL_ENV_REPLICATION_USER=replication \
 -e MYSQL_ENV_REPLICATION_PASS=8d67as9f7sjhsdfsd \
--e BACKEND_MYSQL_MASTER='services/prod/mysql.master.%p/3306;3306/tcp' \
+-e BACKEND_MYSQL_MASTER='services/prod/mysql.master.%p/3306;3306' \
 tutum/mysql
 
 ExecStop=/usr/bin/docker stop mysql.slave.%p.%i
@@ -41,3 +41,4 @@ WantedBy=multi-user.target
 
 [X-Fleet]
 Conflicts=mysql.(slave|master).%p.*
+
