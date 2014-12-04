@@ -1,0 +1,36 @@
+[Unit]
+Description=Marathon
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+Restart=on-failure
+RestartSec=20
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill marathon
+ExecStartPre=-/usr/bin/docker rm marathon
+ExecStartPre=/usr/bin/docker pull mesosphere/marathon:v0.7.5
+ExecStart=/usr/bin/docker run \
+    --name marathon \
+    -e LIBPROCESS_PORT=9090 \
+    -p 8080:8080 \
+    -p 9090:9090 \
+    mesosphere/marathon:v0.7.5 \
+    --master zk://10.0.1.103:2181/mesos \
+    --hostname ${HOSTNAME} \
+    --zk zk://10.0.1.103:2181/marathon \
+    --zk_timeout 10000 \
+    --http_port 8080 \
+    --failover_timeout 604800 \
+    --local_port_min 10000 \
+    --local_port_max 32000 \
+    --checkpoint \
+    --task_launch_timeout 300000
+ExecStop=/usr/bin/docker stop marathon
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true

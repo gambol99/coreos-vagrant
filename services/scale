@@ -1,0 +1,101 @@
+#!/usr/bin/env ruby
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-11-28 15:01:17 +0000 (Fri, 28 Nov 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+require 'optionscrapper'
+require 'erb'
+
+VERSION = "0.0.1"
+
+module FleetCtl
+  module Defaults
+    def default_options
+      {
+        :fleetctl => 'fleetctl',
+        :verbose  => false,
+        :command  => :scale
+      }
+    end
+
+    def options
+      @options ||= default_options
+      @options
+    end
+
+    def validate_scale scale = options[:scale]
+      raise ArgumentError, "invalid scale format, please check usage" unless scale =~ /^x?[0-9]+%?$/
+      scale
+    end
+
+    def validate_filename filename
+      raise ArgumentError, "the file: #{filename} does not exist" unless File.exist? filename
+      raise ArgumentError, "the file: #{filename} is not readable" unless File.readable? filename
+      raise ArgumentError, "the file: #{filename} is not a file" unless File.file? filename
+      filename
+    end
+
+    def required arguments, presented = options
+      arguments.each do |x|
+        raise ArgumentError, "you have specified the #{x} argument" unless presented.has_key? x
+      end
+    end
+  end
+
+  class UnitTemplate
+    def initialize template, scope = {}
+
+    end
+
+    def render
+
+    end
+
+    private
+    def instancenize
+      scope.each_pair do |k,v|
+        instance_variable_set "@#{k}", v
+      end
+    end
+
+  end
+
+  class CLI
+    include Defaults
+
+    def initialize
+      begin
+        parser.parse!
+        send options[:command] if options[:command]
+      rescue SystemExit => e
+        exit e.status
+      rescue Exception => e
+        parser.usage e.message
+      end
+    end
+
+    def scale()
+      required [:unit, :scale]
+      # step: check the file exists and so forth
+      validate_filename options[:unit]
+
+    end
+
+    private
+    def parser
+      @parser ||= OptionScrapper::new do |o|
+        o.banner = "scale -u UNIT -s SCALE_FACTOR"
+        o.on( '-f PATH', '--fleetctl PATH', "the path of the fleetctl binary" ) { |x| options[:fleetctl] = x }
+        o.on( '-v', '--verbose', 'switch on verbose logging mode' ) { options[:verbose] = true }
+        o.on( '-u UNIT', '--app UNIT', 'the unit / application we are acting upon' )  { |x| options[:unit] = x }
+        o.on( '-s SCALE', '--scale SCALE', 'the scale definition of the application') { |x| options[:scale] = validate_scale(x) }
+      end
+    end
+  end
+end
+
+FleetCtl::CLI.new
+
+# scale -u apache@.service [ -s 10 -s x2 -s 40% -s 200% ]
