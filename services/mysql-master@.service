@@ -23,7 +23,7 @@ ExecStart=/usr/bin/docker run -P \
 --name mysql.master.%p.%i \
 -e ENVIRONMENT=prod \
 -e NAME=mysql.master.%p \
--e Tags="prod,mysql,master" \
+-e SERVICE_3306_NAME=mysql.master.%p \
 -e MYSQL_PASS=mysql \
 -e REPLICATION_MASTER=true \
 -e REPLICATION_USER=replication \
