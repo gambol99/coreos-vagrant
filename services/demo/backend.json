@@ -1,0 +1,25 @@
+{
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "quay.io/gambol99/apache-php:latest",
+      "network": "BRIDGE",
+      "portMappings": [
+        { "containerPort": 8080, "hostPort": 0, "protocol": "tcp"}
+      ]
+    }
+  },
+  "args": [ "/usr/sbin/apache2ctl", "-D", "FOREGROUND" ],
+  "env": {
+    "NAME": "backend",
+    "ENVIRONMENT": "prod",
+    "SERVICE_8080_NAME": "backend_app",
+    "BACKEND_REDIS_CACHE": "statd;6379",
+    "BACKEND_MYSQL_MASTER": "mysql;3306",
+    "BACKEND_MYSQL_SLAVES": "mysql_slave;3307"
+  },
+  "id": "backend",
+  "instances": "3",
+  "cpus": "0.2",
+  "mem": "32"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "/frontend",
+  "groups": [
+    {
+      "id": "/frontend/cache",
+      "apps": [
+          {
+            "id": "/frontend/cache/redis",
+            "container": "stats"
+          }
+       ]
+    },{
+      "id": "/frontend/web",
+      "dependencies": [
+        "/frontend/cache"
+      ],
+      "apps": [
+         { "id": "/frontend/web/apache", "container": "apache" }
+      ]
+    }
+  ]
+
+}
