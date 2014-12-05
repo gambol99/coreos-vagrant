@@ -1,4 +1,8 @@
 {
+  "id": "/product/db/database/slave",
+  "instances": "2",
+  "cpus": "0.3",
+  "mem": "96"
   "container": {
     "type": "DOCKER",
     "docker": {
@@ -22,8 +26,5 @@
     "MYSQL_ENV_REPLICATION_PASS": "8d67as9f7sjhsdfsd",
     "BACKEND_MYSQL_MASTER": "mysql;3306"
   },
-  "id": "dbslave",
-  "instances": "2",
-  "cpus": "0.3",
-  "mem": "64"
+  "dependencies": ["/product/db/database/master" ]
 }

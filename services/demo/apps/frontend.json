@@ -1,23 +1,56 @@
-{
-  "id": "/frontend",
-  "groups": [
-    {
-      "id": "/frontend/cache",
-      "apps": [
-          {
-            "id": "/frontend/cache/redis",
-            "container": "stats"
-          }
-       ]
-    },{
-      "id": "/frontend/web",
-      "dependencies": [
-        "/frontend/cache"
-      ],
-      "apps": [
-         { "id": "/frontend/web/apache", "container": "apache" }
-      ]
-    }
-  ]
 
+{
+  "groups": [{
+    "apps": [{
+        "container": {
+
+          "type": "DOCKER"
+          "docker": {
+              "image": "quay.io/gambol99/apache-php:latest",
+              "network": "BRIDGE",
+              "portMappings": [
+                { "containerPort": 80, "hostPort": 0, "protocol": "tcp"},
+                { "containerPort": 443, "hostPort": 0, "protocol": "tcp"}
+              ]
+          },
+        },
+        "cpus": "0.2",
+        "id": "/product/frontend/apache",
+        "instances": "2",
+        "mem": "128"
+    },{
+                    "cmd": "while sleep 10; do date -u +%T; done",
+                    "container": {
+                        "docker": {
+                            "image": "12.0.0.21:5000/busybox",
+                            "network": "BRIDGE",
+                            "portMappings": [
+                                {
+                                    "containerPort": 8080,
+                                    "hostPort": 0,
+                                    "protocol": "tcp",
+                                    "servicePort": 9000
+                                },
+                                {
+                                    "containerPort": 161,
+                                    "hostPort": 0,
+                                    "protocol": "udp"
+                                }
+                            ]
+                        },
+                        "type": "DOCKER"
+                    },
+                    "cpus": "0.2",
+                    "dependencies": [
+                        "/dependency-test/service/dep1"
+                    ],
+                    "id": "dep2",
+                    "instances": "1",
+                    "mem": "128"
+                }
+            ],
+            "id": "service"
+        }
+    ],
+    "id": "dependency-test"
 }

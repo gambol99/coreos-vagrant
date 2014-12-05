@@ -1,4 +1,8 @@
 {
+  "id": "/product/frontend/apache",
+  "instances": "3",
+  "cpus": "0.2",
+  "mem": "64",
   "container": {
     "type": "DOCKER",
     "docker": {
@@ -20,8 +24,11 @@
     "BACKEND_APP_SERVIECS": "backend;8080",
     "BACKEND_MYSQL_SLAVES": "mysql_slave;3307"
   },
-  "id": "frontend",
-  "instances": "4",
-  "cpus": "0.2",
-  "mem": "64"
+  "ports": [
+    80,
+    443
+  ],
+  "backoffSeconds": 1,
+  "backoffFactor": 1.15,
+  "dependencies": ["/product/db/database/slave", "/product/redis/stats" ]
 }

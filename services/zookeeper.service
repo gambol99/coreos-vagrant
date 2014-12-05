@@ -1,6 +1,8 @@
 [Unit]
 Description=Zookeeper Service
 
+# TODO - this need to be clustered
+
 # Requirements
 Requires=etcd.service
 Requires=docker.service
