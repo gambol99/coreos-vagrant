@@ -14,9 +14,10 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run \
     --name=mesos_master \
     --privileged \
     --net=host \
+    -e SERVICE_NAME=mesos_master \
     mesosphere/mesos-master:0.20.1 \
     --ip=$(/usr/bin/ip -o -4 addr list eth1 | grep global | awk \'{print $4}\' | cut -d/ -f1) \
-    --zk=zk://10.0.1.103:2181/mesos \
+    --zk=zk://`etcdctl get /bootstrap/mesos/zookeeper`:2181/mesos \
     --work_dir=/var/lib/mesos/master \
     --quorum=1"
 ExecStop=/usr/bin/docker stop mesos_master

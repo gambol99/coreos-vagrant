@@ -14,6 +14,7 @@ Requires=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=0
+Restart=on-failure
 ExecStartPre=-/usr/bin/docker kill embassy.proxy
 ExecStartPre=-/usr/bin/docker rm embassy.proxy
 ExecStartPre=-/usr/bin/chmod og+rw /var/run/docker.sock

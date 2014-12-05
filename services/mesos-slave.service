@@ -14,6 +14,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run \
     --name=mesos_slave \
     --net=host \
     --privileged \
+    -e SERVICE_NAME=meso_slave \
     -v /sys:/sys \
     -v /usr/bin/docker:/usr/bin/docker:ro \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -21,7 +22,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run \
     mesosphere/mesos-slave:0.20.1 \
     --ip=$(/usr/bin/ip -o -4 addr list eth1 | grep global | awk \'{print $4}\' | cut -d/ -f1) \
     --containerizers=docker \
-    --master=zk://10.0.1.103:2181/mesos \
+    --master=zk://`etcdctl get /bootstrap/mesos/zookeeper`:2181/mesos \
     --work_dir=/var/lib/mesos/slave \
     --log_dir=/var/log/mesos/slave"
 ExecStop=/usr/bin/docker stop mesos_slave
