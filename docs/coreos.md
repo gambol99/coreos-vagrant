@@ -37,6 +37,10 @@ A short list / group of instructions to being
     $ fleetctl start mesos-slave.service
   
     # View in master ui to check when the slaves are registered and ready to use. Once there, we can bring up the marathon cluster
+    
+    # launch some mesos applications
+    alias launch="curl -X POST -H 'Content-Type: application/json' http://10.0.1.102:8080/v2/apps -d"
+    $ launch @frontend.json
 
     $ fleetctl start marathon.service
     # Once done ... open a browser to any of the CoreOS machines: http://IP:8080 and you should be the Marathon UI.
