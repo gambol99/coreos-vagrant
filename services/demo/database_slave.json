@@ -2,7 +2,7 @@
   "id": "/product/db/database/slave",
   "instances": "2",
   "cpus": "0.3",
-  "mem": "96"
+  "mem": "96",
   "container": {
     "type": "DOCKER",
     "docker": {
