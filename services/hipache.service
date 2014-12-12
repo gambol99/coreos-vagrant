@@ -1,0 +1,35 @@
+
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-11-27 16:40:25 +0000 (Thu, 27 Nov 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+[Unit]
+Description=Hipache HTTP Router
+
+Requires=etcd.service
+Requires=docker.service
+After=etcd.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+KillMode=none
+Restart=on-failure
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill hipache
+ExecStartPre=-/usr/bin/docker rm hipache
+ExecStartPre=/usr/bin/docker pull hipache
+ExecStart=/usr/bin/docker run -P \
+--name hipache \
+-e ENVIRONMENT=prod \
+-e NAME=hipache \
+-e SERVICE_6379_NAME=hipache_redis \
+-e SERVICE_80_NAME=hipache_http \
+hipache
+
+ExecStop=/usr/bin/docker stop hipache
+
+[X-Fleet]
+Global=true

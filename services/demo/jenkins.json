@@ -15,7 +15,7 @@
     "SERVICE_8080_NAME": "jenkins"
   },
   "id": "jenkins",
-  "instances": "1",
-  "cpus": "0.5",
-  "mem": "512"
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 512
 }

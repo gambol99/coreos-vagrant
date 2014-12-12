@@ -19,7 +19,7 @@
     "BACKEND_MYSQL_SLAVES": "mysql_slave;3307"
   },
   "id": "backend",
-  "instances": "3",
-  "cpus": "0.2",
-  "mem": "32"
+  "instances": 3,
+  "cpus": 0.2,
+  "mem": 32
 }

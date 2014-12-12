@@ -15,7 +15,6 @@ After=docker.service
 [Service]
 TimeoutStartSec=0
 KillMode=none
-Restart=on-failure
 EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker kill vulcand
 ExecStartPre=-/usr/bin/docker rm vulcand

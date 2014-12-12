@@ -1,8 +1,8 @@
 {
   "id": "/product/db/database/master",
-  "instances": "1",
-  "cpus": "0.3",
-  "mem": "128",
+  "instances": 1,
+  "cpus": 0.3,
+  "mem": 128,
   "container": {
     "type": "DOCKER",
     "docker": {

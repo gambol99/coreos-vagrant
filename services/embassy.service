@@ -18,7 +18,7 @@ Restart=on-failure
 ExecStartPre=-/usr/bin/docker kill embassy.proxy
 ExecStartPre=-/usr/bin/docker rm embassy.proxy
 ExecStartPre=-/usr/bin/chmod og+rw /var/run/docker.sock
-ExecStartPre=/usr/bin/docker pull quay.io/gambol99/embassy:latest
+ExecStartPre=/usr/bin/docker pull gambol99/embassy
 ExecStart=/usr/bin/docker run --privileged=true --net=host \
 --name embassy.proxy \
 -e ENVIRONMENT=prod \
@@ -27,7 +27,7 @@ ExecStart=/usr/bin/docker run --privileged=true --net=host \
 -e INTERFACE=eth1 \
 -e DISCOVERY=consul://${COREOS_PRIVATE_IPV4}:8500 \
 -e VERBOSITY=3 \
--v /var/run/docker.sock:/var/run/docker.sock quay.io/gambol99/embassy:latest
+-v /var/run/docker.sock:/var/run/docker.sock gambol99/embassy
 
 ExecStop=/usr/bin/docker stop embassy.proxy
 
