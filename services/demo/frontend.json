@@ -20,7 +20,7 @@
     "BACKEND_APP_SERVIECS": "backend;8080",
     "BACKEND_MYSQL_SLAVES": "mysql_slave;3307"
   },
-  "id": "/product/web/frontend",
+  "id": "/product/web/appfrontend",
   "instances": 3,
   "mem": 64,
   "cpus": 0.2
