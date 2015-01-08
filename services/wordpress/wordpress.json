@@ -1,0 +1,27 @@
+{
+  "id": "/product/wordpress/frontend",
+  "instances": 1,
+  "mem": 128,
+  "cpus": 0.2,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "wordpress",
+      "network": "BRIDGE",
+      "portMappings": [
+        { "containerPort": 80,  "hostPort": 0, "protocol": "tcp" }
+      ]
+    }
+  },
+  "env": {
+    "NAME": "frontend",
+    "ENVIRONMENT": "prod",
+    "SERVICE_80_NAME": "wordpress_http",
+    "MYSQL_PORT_3306_TCP": "tcp://172.17.42.1:3306",
+    "WORDPRESS_DB_HOST": "172.17.42.1",
+    "WORDPRESS_DB_NAME": "wordpress",
+    "WORDPRESS_DB_USER": "admin",
+    "WORDPRESS_DB_PASSWORD":  "mysql",
+    "BACKEND_MYSQL": "wordpress_db;3306"
+  }
+}
