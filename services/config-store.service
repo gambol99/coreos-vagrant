@@ -20,6 +20,9 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run \
   -v /config:/config \
   quay.io/gambol99/config-fs"
 
+ExecStop=/usr/bin/docker stop config-store
+ExecStop=/usr/bin/docker rm config-store
+
 [Install]
 WantedBy=multi-user.target
 

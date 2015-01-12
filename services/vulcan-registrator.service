@@ -12,11 +12,11 @@ Requires=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 Restart=on-failure
-RestartSec=5
+RestartSec=10
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill vulcan-registrator
 ExecStartPre=-/usr/bin/docker rm vulcan-registrator
-ExecStartPre=/usr/bin/docker pull quay.io/gambol99/vulcan-registrator
+ExecStartPre=/usr/bin/docker pull gambol99/vulcan-registrator
 ExecStart=/usr/bin/docker run \
   --name vulcan-registrator \
   -e NAME=vulcan-registrator \
@@ -24,7 +24,9 @@ ExecStart=/usr/bin/docker run \
   -e ETCD=${COREOS_PRIVATE_IPV4} \
   -e IPADDRESS=${COREOS_PRIVATE_IPV4} \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  quay.io/gambol99/vulcan-registrator"
+  gambol99/vulcan-registrator -v
+
+ExecStop=/usr/bin/docker stop vulcan-registrator
 
 [Install]
 WantedBy=multi-user.target

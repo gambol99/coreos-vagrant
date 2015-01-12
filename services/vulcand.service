@@ -15,6 +15,8 @@ After=docker.service
 [Service]
 TimeoutStartSec=0
 KillMode=none
+Restart=on-failure
+RestartSec=20
 EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker kill vulcand
 ExecStartPre=-/usr/bin/docker rm vulcand
@@ -23,7 +25,7 @@ ExecStart=/usr/bin/docker run -p 8182:8182 -p 8181:8181 \
 --name vulcand \
 -e ENVIRONMENT=prod \
 -e SERVICE_8181_NAME=vulcand_http \
--e SERVICE_8282_NAME=vulcand_api \
+-e SERVICE_8182_NAME=vulcand_api \
 -e NAME=vulcand \
 mailgun/vulcand /go/bin/vulcand -apiInterface=0.0.0.0 --etcd=http://${COREOS_PRIVATE_IPV4}:4001
 
