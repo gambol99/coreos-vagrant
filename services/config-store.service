@@ -5,20 +5,23 @@ Requires=docker.service
 
 [Service]
 EnvironmentFile=/etc/environment
-Restart=on-failure
-RestartSec=5
+#Restart=on-failure
+#RestartSec=5
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill config-store
 ExecStartPre=-/usr/bin/docker rm config-store
-ExecStartPre=/usr/bin/docker pull quay.io/gambol99/config-fs:latest
+ExecStartPre=/usr/bin/docker pull gambol99/config-fs
 ExecStart=/usr/bin/sh -c "/usr/bin/docker run \
   --name config-store \
   -e NAME=config-store \
   -e ENVIRONMENT=prod \
-  -e CONFIG_URL=`curl -s http://${COREOS_PRIVATE_IPV4}:4001/v1/machines | sed -e 's/\(http:\/\/\| \)//g' -e 's/^/etcd:\/\//'` \
+  -e CONFIG_URL=etcd://${COREOS_PRIVATE_IPV4}:4001 \
   -e DISCOVERY_URL=consul://${COREOS_PRIVATE_IPV4}:8500 \
+  -e VERBOSITY=3 \
   -v /config:/config \
-  quay.io/gambol99/config-fs"
+  gambol99/config-fs"
+
+# -e CONFIG_URL=`curl -s http://${COREOS_PRIVATE_IPV4}:4001/v1/machines | sed -e 's/\(http:\/\/\| \)//g' -e 's/^/etcd:\/\//'` \
 
 ExecStop=/usr/bin/docker stop config-store
 ExecStop=/usr/bin/docker rm config-store
