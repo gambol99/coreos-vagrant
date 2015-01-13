@@ -5,7 +5,7 @@
       "image": "quay.io/gambol99/apache-php:latest",
       "network": "BRIDGE",
       "portMappings": [
-        { "containerPort": 8080, "hostPort": 0, "protocol": "tcp"}
+        { "containerPort": 80, "hostPort": 0, "protocol": "tcp"}
       ]
     }
   },
@@ -13,12 +13,10 @@
   "env": {
     "NAME": "backend",
     "ENVIRONMENT": "prod",
-    "SERVICE_8080_NAME": "backend_app",
-    "BACKEND_REDIS_CACHE": "statd;6379",
-    "BACKEND_MYSQL_MASTER": "mysql;3306",
-    "BACKEND_MYSQL_SLAVES": "mysql_slave;3307"
+    "SERVICE_80_NAME": "api_admin",
+    "VS_80_BACKEND_ID": "admin"
   },
-  "id": "backend",
+  "id": "/product/api/admin",
   "instances": 3,
   "cpus": 0.2,
   "mem": 32
