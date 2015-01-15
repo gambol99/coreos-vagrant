@@ -13,10 +13,10 @@
   "env": {
     "NAME": "backend",
     "ENVIRONMENT": "prod",
-    "SERVICE_80_NAME": "backend",
-    "VS_80_BACKEND_ID": "backend_http"
+    "SERVICE_80_NAME": "api-orders",
+    "VS_80_BACKEND_ID": "api-orders"
   },
-  "id": "/product/web/backend",
+  "id": "/product/api/orders",
   "instances": 3,
   "cpus": 0.2,
   "mem": 32
