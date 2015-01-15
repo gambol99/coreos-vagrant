@@ -13,8 +13,7 @@ VERSION="1.4.1"
 NAME="Elasticsearch ${VERSION}"
 SERVICE_DELAY=${SERVICE_DELAY:-5}
 JAVA_OPTS=${JAVA_OPTS:-""}
-JAVA_OPTS="
-  -Des.transport.publish_host=${HOST} \
+JAVA_OPTS="-Des.transport.publish_host=${HOST} \
   -Des.transport.publish_port=${PORT_9300}"
 
 if [ -n "${CLUSTER}" ]; then
