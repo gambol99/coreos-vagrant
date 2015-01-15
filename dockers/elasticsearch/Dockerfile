@@ -11,7 +11,6 @@ ADD config/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo
 ADD config/elasticsearch.yml /usr/share/elasticsearch/configelasticsearch.yml
 ADD config/startup.sh /startup.sh
 
-RUN chmod +x /startup.sh
 RUN rpm --import https://packages.elasticsearch.org/GPG-KEY-elasticsearch
 RUN yum install -y java-1.7.0-openjdk.x86_64 elasticsearch
 
@@ -21,5 +20,5 @@ EXPOSE 9300
 
 WORKDIR /data
 
-ENTRYPOINT [ "/startup.sh" ]
+CMD [ "/startup.sh" ]
 
