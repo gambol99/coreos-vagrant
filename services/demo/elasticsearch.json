@@ -2,21 +2,28 @@
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "dockerfile/elasticsearch",
+      "image": "quay.io/gambol99/elasticsearch:latest",
       "network": "BRIDGE",
       "portMappings": [
-        { "containerPort": 9200, "hostPort": 0, "protocol": "tcp"},
-        { "containerPort": 9300, "hostPort": 0, "protocol": "tcp"}
+        { "containerPort": 9200, "hostPort": 9200, "protocol": "tcp"},
+        { "containerPort": 9300, "hostPort": 9300, "protocol": "tcp"}
       ]
-    }
+    },
+    "volumes": [
+      {
+          "containerPath": "/usr/share/elasticsearch/config/elasticsearch.yml",
+          "hostPath": "/config/prod/config/elasticsearch.conf",
+          "mode": "RO"
+      }
+    ]
   },
-  "volumes": [
-    {
-        "containerPath": "/usr/share/elasticsearch/config/elasticsearch.yml",
-        "hostPath": "/config/prod/config/elasticsearch.yml",
-        "mode": "RO"
-    }
+  "constraints": [
+    [
+      "hostname",
+      "UNIQUE"
+    ]
   ],
+  "args": [ "/bin/bash", "/startup.sh" ],
   "env": {
     "NAME": "elasticsearch",
     "ENVIRONMENT": "prod",

@@ -8,7 +8,7 @@ FROM centos:latest
 MAINTAINER Rohith <gambol99@gmail.com>
 
 ADD config/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo
-ADD config/elasticsearch.yml /usr/share/elasticsearch/configelasticsearch.yml
+ADD config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 ADD config/startup.sh /startup.sh
 
 RUN rpm --import https://packages.elasticsearch.org/GPG-KEY-elasticsearch
