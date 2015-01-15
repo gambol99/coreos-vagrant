@@ -12,7 +12,7 @@
   },
   "volumes": [
     {
-        "containerPath": "/etc/elasticsearch/elasticsearch.yml",
+        "containerPath": "/usr/share/elasticsearch/config/elasticsearch.yml",
         "hostPath": "/config/prod/config/elasticsearch.yml",
         "mode": "RO"
     }
@@ -22,11 +22,11 @@
     "ENVIRONMENT": "prod",
     "ELASTICSEARCH_CLUSTER_NANE": "es-prod",
     "SERVICE_DELAY": "10",
-    "SERVICE_9200_NAME": "elasticsearch_client",
-    "SERVICE_9300_NAME": "elasticsearch_peer"
+    "SERVICE_9200_NAME": "es_prod_client",
+    "SERVICE_9300_NAME": "es_prod_peer"
   },
-  "id": "/prod/elasticsearch",
+  "id": "/prod/elasticsearch/es-prod",
   "instances": 1,
-  "cpus": 0.2,
-  "mem": 128
+  "cpus": 0.3,
+  "mem": 235
 }
