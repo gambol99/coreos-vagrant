@@ -8,12 +8,12 @@ FROM centos:latest
 MAINTAINER Rohith <gambol99@gmail.com>
 
 ADD config/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo
-ADD config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+ADD config/elasticsearch.yml /usr/share/elasticsearch/configelasticsearch.yml
 ADD config/startup.sh /startup.sh
 
 RUN chmod +x /startup.sh
 RUN rpm --import https://packages.elasticsearch.org/GPG-KEY-elasticsearch
-RUN yum install -y java-1.6.0-openjdk.x86_64 elasticsearch
+RUN yum install -y java-1.7.0-openjdk.x86_64 elasticsearch
 
 VOLUME /data
 EXPOSE 9200
