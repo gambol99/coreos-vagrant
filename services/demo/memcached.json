@@ -1,8 +1,9 @@
 {
   "id": "/product/cache/memcached",
-  "instances": 2,
+  "instances": 1,
   "mem": 256,
   "cpus": 0.2,
+  "constraints": [["hostname", "UNIQUE"]],
   "container": {
     "type": "DOCKER",
     "docker": {

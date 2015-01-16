@@ -16,13 +16,12 @@ JAVA_OPTS=${JAVA_OPTS:-""}
 JAVA_OPTS="-Des.transport.publish_host=${HOST} \
   -Des.transport.publish_port=${PORT_9300}"
 
-if [ -n "${CLUSTER}" ]; then
-  JAVA_OPTS="${JAVA_OPTS} -Des.cluster.name=${CLUSTER}"
-fi
-
-if [ -n "${NODE_NAME}" ]; then
-  JAVA_OPTS="${JAVA_OPTS} -Des.node.name=${NODE_NAME}"
-fi
+[ -n "${CLUSTER}"   ] && JAVA_OPTS="${JAVA_OPTS} -Des.cluster.name=${CLUSTER}"
+[ -n "${NODE_NAME}" ] && JAVA_OPTS="${JAVA_OPTS} -Des.node.name=${NODE_NAME}"
+[ -n "${CONFIG}"    ] && {
+  annonce "Elasticsearch configuration";
+  cat ${CONFIG};
+}
 
 if [ -n "${PLUGINS}" ]; then
   while read plugin; do
