@@ -5,8 +5,8 @@
       "image": "quay.io/gambol99/elasticsearch:latest",
       "network": "BRIDGE",
       "portMappings": [
-        { "containerPort": 9200, "hostPort": 9200, "protocol": "tcp"},
-        { "containerPort": 9300, "hostPort": 9300, "protocol": "tcp"}
+        { "containerPort": 9200, "hostPort": 0, "protocol": "tcp"},
+        { "containerPort": 9300, "hostPort": 0, "protocol": "tcp"}
       ]
     },
     "volumes": [
@@ -27,7 +27,8 @@
   "env": {
     "NAME": "elasticsearch",
     "ENVIRONMENT": "prod",
-    "ELASTICSEARCH_CLUSTER_NANE": "es-prod",
+    "CLUSTER": "es-prod",
+    "PLUGINS": "karmi/elasticsearch-paramedic",
     "SERVICE_DELAY": "10",
     "SERVICE_9200_NAME": "es_prod_client",
     "SERVICE_9300_NAME": "es_prod_peer"
@@ -35,5 +36,5 @@
   "id": "/prod/elasticsearch/es-prod",
   "instances": 1,
   "cpus": 0.3,
-  "mem": 235
+  "mem": 256
 }

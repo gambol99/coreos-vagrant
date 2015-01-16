@@ -24,6 +24,13 @@ if [ -n "${NODE_NAME}" ]; then
   JAVA_OPTS="${JAVA_OPTS} -Des.node.name=${NODE_NAME}"
 fi
 
+if [ -n "${PLUGINS}" ]; then
+  while read plugin; do
+    annonce "Installing the plugin: ${plugin}"
+    /usr/share/elasticsearch/bin/plugin -install ${plugin}
+  done < <(echo ${PLUGINS} | tr "," "\n")
+fi
+
 annonce "Waiting for ${SERVICE_DELAY} seconds before starting up ${NAME}"
 sleep ${SERVICE_DELAY}
 
