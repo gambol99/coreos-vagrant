@@ -18,10 +18,6 @@ JAVA_OPTS="-Des.transport.publish_host=${HOST} \
 
 [ -n "${CLUSTER}"   ] && JAVA_OPTS="${JAVA_OPTS} -Des.cluster.name=${CLUSTER}"
 [ -n "${NODE_NAME}" ] && JAVA_OPTS="${JAVA_OPTS} -Des.node.name=${NODE_NAME}"
-[ -n "${CONFIG}"    ] && {
-  annonce "Elasticsearch configuration";
-  cat ${CONFIG};
-}
 
 if [ -n "${PLUGINS}" ]; then
   while read plugin; do
@@ -32,6 +28,11 @@ fi
 
 annonce "Waiting for ${SERVICE_DELAY} seconds before starting up ${NAME}"
 sleep ${SERVICE_DELAY}
+
+[ -n "${CONFIG}"    ] && {
+  annonce "Elasticsearch configuration";
+  cat ${CONFIG};
+}
 
 annonce "Starting ${NAME} service"
 annonce "JAVA_OPTS: ${JAVA_OPTS}"
