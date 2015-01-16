@@ -1,4 +1,8 @@
 {
+  "id": "/prod/elasticsearch/es-prod",
+  "instances": 3,
+  "cpus": 0.3,
+  "mem": 256,
   "container": {
     "type": "DOCKER",
     "docker": {
@@ -12,7 +16,7 @@
     "volumes": [
       {
           "containerPath": "/usr/share/elasticsearch/config/elasticsearch.yml",
-          "hostPath": "/config/prod/config/elasticsearch.conf",
+          "hostPath": "/config/env/prod/config/elasticsearch/es-prod.yml",
           "mode": "RO"
       }
     ]
@@ -30,12 +34,8 @@
     "CLUSTER": "es-prod",
     "CONFIG": "/usr/share/elasticsearch/config/elasticsearch.yml",
     "PLUGINS": "karmi/elasticsearch-paramedic",
-    "SERVICE_DELAY": "10",
-    "SERVICE_9200_NAME": "es_prod_client",
-    "SERVICE_9300_NAME": "es_prod_peer"
-  },
-  "id": "/prod/elasticsearch/es-prod",
-  "instances": 1,
-  "cpus": 0.3,
-  "mem": 256
+    "SERVICE_9200_NAME": "es-prod-clients",
+    "SERVICE_9300_NAME": "es-prod-peers",
+    "SERVICE_DELAY": "10"
+  }
 }
