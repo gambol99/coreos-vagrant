@@ -9,7 +9,7 @@ MAINTAINER Rohith <gambol99@gmail.com>
 
 ADD config/startup.sh /startup.sh
 
-RUN yum install -y java-1.7.0-openjdk-headless wget tar
+RUN yum install -y java-1.7.0-openjdk-headless wget tar egrep
 RUN wget -q -O - http://apache.mirrors.pair.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz | tar -xzf - -C /opt \
     && mv /opt/zookeeper-3.4.6 /opt/zookeeper \
     && mkdir -p /var/lib/zookeeper \

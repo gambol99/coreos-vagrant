@@ -10,6 +10,7 @@ NAME="Zookeeper ${VERSION}"
 
 SERVICE_DELAY="5"
 ZOO_DIR="/opt/zookeeper"
+ZOO_HOST=${HOST:-""}
 ZOO_ID=${ZOO_ID:-""}
 ZOO_CONFIG="${ZOO_DIR}/conf/zoo.cfg"
 ZOO_PORT_CLIENT=${ZOO_PORT_CLIENT:-2181}
@@ -29,8 +30,9 @@ annonce "Generating the ${NAME} configuration: ${ZOO_CONFIG}"
 # step: if we have a cluster, lets template them
 if [ -n "${ZOO_SERVERS}" ]; then
   # step: we need to add myid
+  ZOO_ID=$(echo ${ZOO_HOST} | egrep -o '[0-9]{3}')
+  annonce "The zookeeper id for this host: ${ZOO_ID}"
   [ -z "${ZOO_ID}" ] && failed "You have not specified the zookeeper id for this server"
-
   echo "${ZOO_ID}" > "/var/lib/zookeeper/myid"
 
   echo "# Cluster configuration" >> ${ZOO_CONFIG}
