@@ -12,6 +12,7 @@ SERVICE_DELAY="5"
 ZOO_DIR="/opt/zookeeper"
 ZOO_HOST=${HOST:-""}
 ZOO_ID=${ZOO_ID:-""}
+ZOO_IPADDRESS=$(ip -o -4 addr show dev eth0 | awk -F '[ /]+' '/global/ {print $4}')
 ZOO_CONFIG="${ZOO_DIR}/conf/zoo.cfg"
 ZOO_PORT_CLIENT=${ZOO_PORT_CLIENT:-2181}
 ZOO_PORT_FOLLOWER=${ZOO_PORT_FOLLOWER:-2888}
@@ -25,7 +26,7 @@ failed() {
   [ -n "$1" ] && { annonce "[failed] $1"; exit 1; }
 }
 
-annonce "Generating the ${NAME} configuration: ${ZOO_CONFIG}"
+annonce "Generating the ${NAME} configuration: ${ZOO_CONFIG}, ipaddress: ${ZOO_IPADDRESS}"
 
 # step: if we have a cluster, lets template them
 if [ -n "${ZOO_SERVERS}" ]; then
@@ -40,6 +41,7 @@ if [ -n "${ZOO_SERVERS}" ]; then
   for SERVER in $(echo "${ZOO_SERVERS}" | tr ',' '\n'); do
     ID=${SERVER%%:*}
     IPADDRESS=${SERVER##*:}
+    [ "${ID}" == "${ZOO_ID}" ] && IPADDRESS=${ZOO_IPADDRESS}
     echo "server.${ID}=${IPADDRESS}:${ZOO_PORT_FOLLOWER}:${ZOO_PORT_SERVER}" >> ${ZOO_CONFIG}
   done
 fi
