@@ -60,13 +60,6 @@ Asumming you've built the fleetctl cli and place it into the PATH
     789ec339... 10.0.1.102  -
     ba95766b... 10.0.1.101  -
 
-
-Services
---------
-
-
-
-
 Issues
 --------
 
@@ -77,3 +70,13 @@ I've noticed that on occasion the cloudinit doesnt work correctly; To manually p
     core@core103 # /usr/bin $ curl localhost:4001/v1/machines; echo
     http://10.0.1.101:4001, http://10.0.1.102:4001, http://10.0.1.103:4001
     core@core103 # /usr/bin $
+    
+Contributing
+------------
+
+ - Fork it
+ - Create your feature branch (git checkout -b my-new-feature)
+ - Commit your changes (git commit -am 'Add some feature')
+ - Push to the branch (git push origin my-new-feature)
+ - Create new Pull Request
+ - If applicable, update the README.md
