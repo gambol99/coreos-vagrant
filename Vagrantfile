@@ -46,6 +46,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # step: do we need a discovery code?
   discovery_token if vagrant_command =~ /(up|provision)/
   coreos[:coreos_instances].times.each.with_index(coreos[:instance_index]) do |x,index|
+    domain   = coreos[:domain]
     hostname = "core#{index}"
     config.vm.define hostname do |x|
       x.vm.host_name = hostname
@@ -64,24 +65,30 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
 
       # AWS Provider
-      config.vm.provider :aws do |aws, override|
+      x.vm.provider :aws do |aws, override|
         aws.access_key_id     = ENV['AWS_ACCESS_KEY']
         aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-        aws.region            = ENV['AWS_REGION'] || 'eu-west-1'
-        aws.subnet_id         = ENV['AWS_VPC_SUBNET_ID'] if ENV['AWS_VPC_SUBNET_ID']
+        aws.region            = ENV['AWS_REGION'] || "eu-west-1"
+        aws.instance_type     = 'm1.small'
 
-        aws.instance_type     = 'm3.medium'
-        aws.region_config "us-east-1" do |region|
-          region.ami          = 'ami-7e5d3d16'
+        aws.subnet_id         = ec2[:subnet_id] if ec2[:subnet_id]
+        aws.availability_zone = ec2[:availability_zone] if ec2[:availability_zone]
+
+        aws.tags = {
+          'Name' => @hostname,
+          'Type' => "CoreOS"
+        }
+
+        # configuration related to regions
+        #aws.region_config "us-east-1" do |region|
+        #  region.ami          = 'ami-3e750856'
+        #  region.keypair_name = 'default'
+        #end
+
+        aws.region_config "eu-west-1" do |region|
+          region.ami          = 'ami-e76dec90'
           region.keypair_name = 'default'
         end
-        aws.region_config "eu-west-1" do |region|
-          region.ami          = 'ami-7a3a840d'
-          region.keypair_name = 'hackday'
-        end
-        aws.tags = {
-          'Name' => hostname
-        }
         aws.user_data         = cloudinit
 
         override.vm.box       = 'dummy'

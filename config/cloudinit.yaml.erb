@@ -7,15 +7,14 @@ cat <<EOF >/var/lib/coreos-vagrant/vagrantfile-user-data
 #
 #  vim:ts=2:sw=2:et
 #
+hostname: <%= hostname %>
+
 write_files:
   - path: /etc/hosts
     permissions: 0444
     owner: root
     content: |
       10.0.1.112    hub101 hub
-      10.0.1.101    core101
-      10.0.1.102    core102
-      10.0.1.103    core102
   - path: /etc/coreos.environment
     permissions: 0444
     owner: root
@@ -24,6 +23,9 @@ write_files:
       DEFAULT_ENVIRONMENT=prod
       DEFAULT_APP=unknown
       DEFAULT_NAME=unknown
+
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7K4+mLac9yexhMY5N+XtQIbTFHxVJJLlpm4/DJw3HET25AZpy7AeBDhQwgjYHd+saPUuocxNkztmYelgXkIWhIwWn2vODt0wBryt1skNs07mVm+jPawNRrEs9q+uVVAn64P+2WmyJVgsFWOkKkrnH/sypJnLSNk8WDdpqD6JLz4fsy9+zinMh7k7Xo5UfBq78pVfUS9aVlMpOj3NmdD1UpxbIBsC+ttlVR43rqrnySK9zhzezYot4PlA1LInnw8E7o8TxnJ6z2xXx5PsNMbjLW94OjpjsbvbKsKnLunA2LMc65HtOAVdPqHTWxbMuSlKjChiWJDjujdjVID8FpW09 imported-openssh-key
 
 coreos:
   etcd:

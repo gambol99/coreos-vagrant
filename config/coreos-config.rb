@@ -10,6 +10,7 @@
   :coreos_instances => 3,
   :coreos_userdata  => "./config/cloudinit.yaml.erb",
   :network          => "10.0.1.%d",
+  :domain           => "",
   :instance_index   => 101,
   :discovery_token  => nil,
   :discovery_url    => "https://discovery.etcd.io/new",
@@ -21,5 +22,17 @@
       :memory       => 2048,
       :biosbootmenu => "disabled",
     }
+  },
+  # configuration related to ec2 instances
+  :ec2 => {
+    :flavor    => "t2.micro",
+    :image     => "ami-7e5d3d16",
+    :keypair   => "default",
+    :region    => "eu-west-1",
+    :subnet_id => "subnet-eafb31b3"
   }
 }
+
+def ec2
+  @coreos[:ec2] || {}
+end
