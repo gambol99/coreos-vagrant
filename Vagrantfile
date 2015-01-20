@@ -10,8 +10,9 @@ require 'net/http'
 require 'erb'
 require 'config/coreos-config'
 
-VAGRANTFILE_API_VERSION = "2"
-USERDATA = 'config/cloudinit.yaml.erb'
+VAGRANTFILE_API_VERSION  = "2"
+VAGRANT_DEFAULT_PROVIDER = :virtualbox
+USERDATA                 = 'config/cloudinit.yaml.erb'
 
 def discovery_token
   @discovery_token ||= get_discovery_token
@@ -47,19 +48,44 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   coreos[:coreos_instances].times.each.with_index(coreos[:instance_index]) do |x,index|
     hostname = "core#{index}"
     config.vm.define hostname do |x|
+      x.vm.host_name = hostname
       x.vm.box       = "coreos-#{coreos[:coreos_channel]}"
       x.vm.box_url   = "#{coreos[:instance][:url]}" % [ coreos[:coreos_channel] ]
-      x.vm.host_name = hostname
-      x.vm.network :private_network, ip: "#{coreos[:network]}" % [ index ]
-      x.vm.provider :virtualbox do |v|
+
+      # VirtualBox provider
+      x.vm.provider :virtualbox do |v,override|
         v.gui   = false
         v.name  = hostname
         coreos[:instance][:resources].each_pair do |key,value|
           v.customize [ "modifyvm", :id, "--#{key}", value ]
         end
+        override.vm.network :private_network, ip: "#{coreos[:network]}" % [ index ]
+        override.vm.provision :shell, :inline => cloudinit, :privileged => true
       end
-      if File.exist?(USERDATA) and File.readable?(USERDATA)
-        x.vm.provision :shell, :inline => cloudinit, :privileged => true
+
+      # AWS Provider
+      config.vm.provider :aws do |aws, override|
+        aws.access_key_id     = ENV['AWS_ACCESS_KEY']
+        aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+        aws.region            = ENV['AWS_REGION'] || 'eu-west-1'
+        aws.subnet_id         = ENV['AWS_VPC_SUBNET_ID'] if ENV['AWS_VPC_SUBNET_ID']
+
+        aws.instance_type     = 'm3.medium'
+        aws.region_config "us-east-1" do |region|
+          region.ami          = 'ami-7e5d3d16'
+          region.keypair_name = 'default'
+        end
+        aws.region_config "eu-west-1" do |region|
+          region.ami          = 'ami-7a3a840d'
+          region.keypair_name = 'hackday'
+        end
+        aws.tags = {
+          'Name' => hostname
+        }
+        aws.user_data         = cloudinit
+
+        override.vm.box       = 'dummy'
+        override.ssh.username = 'root'
       end
     end
   end

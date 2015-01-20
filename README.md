@@ -1,10 +1,21 @@
-CoreOS Vagrant
-==============
+### **CoreOS**
+-----
 
-A vagrant development environment for playing about with CoreOS
+A development environment for playing about with CoreOS. Included under the services/ is a collection of components for building out a docker environment:
 
-Config
---------
+>  - **Service Discovery / Monitoring**: using either etcd and of consul
+>  - **Service Registration**: via [service-registator](github.com/gambol99/service-registrar) and or [registrator](github.com/progrium/registrator)
+>  - **Resource Management / Scheduling**: a clustered setup for Apache Mesos (multi-master / slaves) and clustered Marathon for docker deployments
+>  - **Service Auto-wiring**: auto-wiring and load balancing of container services performed by the [Embassy](ithub.com/gambol99/embassy) project.
+>  - **HTTP Router**: via HAproxy and or Vulcand, along side auto registration of backends, frontends and potentially url breakdowns i.e api.domain/orders to here, /session to this cluster, /admin/* over there ete etc 
+>  - **Dynamic Configuration**: a proof concept project ([config-fs](github.com/gambol99/config-fs)) using templated and dynamic configuration. 
+>  - **Marathon Demo**: a collection of Marathon deployments, comprising of a classic three-tier system, using to demo out the above setup.
+
+#### **Services**
+
+View the docs/ directory the details around the specific sections
+
+#### **Vagrant Configuration**
 
 The configraution file is located in config/coreos-config.rb
 
@@ -31,8 +42,7 @@ The configraution file is located in config/coreos-config.rb
 
 Its self explanatory, so wont bother with a description; Note, if you want to use a predefined discovery service token, just place the url in :discovery_token above, otherwise it will pull a new token from default discovery url (:discovery_url)
 
-Setup
---------
+#### **Setup**
 
     [jest@starfury coreos-vagrant]$ vagrant status
     Current machine states:
@@ -48,8 +58,7 @@ Setup
     [jest@starfury coreos-vagrant]$ vagrant up
 
 
-Fleetclt
---------
+#### **Fleetctl**
 
 Asumming you've built the fleetctl cli and place it into the PATH
 
@@ -60,8 +69,9 @@ Asumming you've built the fleetctl cli and place it into the PATH
     789ec339... 10.0.1.102  -
     ba95766b... 10.0.1.101  -
 
-Issues
---------
+
+
+#### **Issues**
 
 I've noticed that on occasion the cloudinit doesnt work correctly; To manually process the cloudinit user-data you can perform the following; or better yet, workout the underlining reason :-)
 
@@ -71,8 +81,7 @@ I've noticed that on occasion the cloudinit doesnt work correctly; To manually p
     http://10.0.1.101:4001, http://10.0.1.102:4001, http://10.0.1.103:4001
     core@core103 # /usr/bin $
     
-Contributing
-------------
+#### **Contributing**
 
  - Fork it
  - Create your feature branch (git checkout -b my-new-feature)
