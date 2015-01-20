@@ -7,7 +7,7 @@
 @coreos = {
   :coreos_channel   => "alpha",
   :coreos_version   => ">= 308.0.1",
-  :coreos_instances => 2,
+  :coreos_instances => 3,
   :coreos_userdata  => "./config/cloudinit.yaml.erb",
   :network          => "10.0.1.%d",
   :instance_index   => 101,
