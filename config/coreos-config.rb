@@ -10,7 +10,6 @@
   :coreos_cluster_size => 3,
   :coreos_userdata     => "./config/cloudinit.yaml.erb",
   :network             => "10.0.1.%d",
-  :userdata_file       => 'config/cloudinit.yaml.erb',
   :instance_index      => 101,
   :discovery_token     => nil,
   :discovery_url       => "https://discovery.etcd.io/new",
@@ -18,6 +17,7 @@
   :virtualbox => {
     :name => "coreos",
     :url  => "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json",
+    :userdata  => 'config/cloudinit.virtualbox.erb',
     :resources => {
       :cpus         => 2,
       :memory       => 2048,
@@ -25,11 +25,13 @@
     }
   },
   :aws => {
-    :flavor    => 't2.micro',
-    :image     => 'ami-7e5d3d16',
-    :keypair   => 'default',
-    :region    => 'eu-west-1',
-    :subnet_id => 'subnet-eafb31b3'
+    :flavor     => 'm1.small',
+    :image      => 'ami-7e5d3d16',
+    :userdata   => 'config/cloudinit.aws.erb',
+    :keypair    => 'default',
+    :region     => 'eu-west-1',
+    :subnet_id  => 'subnet-eafb31b3',
+    :elastic_ip => true
   }
 }
 
@@ -51,10 +53,6 @@ end
 
 def vagrant_command
   ARGV[0]
-end
-
-def userdata_file
-  @userdata_file ||= File.read(coreos[:userdata_file])
 end
 
 def get_discovery_token

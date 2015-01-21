@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     @hostname = "core#{host_index}"
 
     # step: we generate the cloudinit now
-    user_data = ERB.new( userdata_file, nil, '-' ).result( binding )
+    user_data = ERB.new( File.read(aws_cfg[:userdata]), nil, '-' ).result( binding )
 
     config.vm.define @hostname do |x|
       x.vm.host_name = @hostname
@@ -56,9 +56,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         aws.instance_type     = aws_cfg[:flavor] || 'm1.small'
         aws.subnet_id         = aws_cfg[:subnet_id]
         aws.availability_zone = aws_cfg[:availability_zone] if aws_cfg[:availability_zone]
+        aws.elastic_ip        = aws_cfg[:elastic_ip]
         aws.user_data         = user_data
+
         aws.tags              = {
-          'Name' => @hostname,
+          'Name' => "core#{host_index}",
           'Type' => 'CoreOS'
         }
 
@@ -72,10 +74,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           region.keypair_name = 'default'
         end
 
-
-
         override.vm.box       = 'dummy'
         override.ssh.username = 'core'
+        override.ssh.private_key_path = "#{ENV['HOME']}/.ssh/id_rsa"
       end
     end
   end
