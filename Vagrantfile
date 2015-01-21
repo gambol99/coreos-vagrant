@@ -15,7 +15,6 @@ VAGRANT_DEFAULT_PROVIDER = :virtualbox
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_check_update = true
-  # step: do we need a discovery code?
   discovery_token if vagrant_command =~ /(up|provision)/
   coreos[:coreos_cluster_size].times.each.with_index(coreos[:instance_index]) do |x,host_index|
     # step: get the configuation and domain
@@ -26,7 +25,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     user_data = ERB.new( userdata_file, nil, '-' ).result( binding )
 
     config.vm.define @hostname do |x|
-      # step: set the generic stuff
       x.vm.host_name = @hostname
       x.vm.box       = 'coreos-%s' % [ coreos[:coreos_channel] ]
       x.vm.box_url   = "#{virtualbox_cfg[:url]}" % [ coreos[:coreos_channel] ]
