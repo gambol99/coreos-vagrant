@@ -12,87 +12,72 @@ require 'config/coreos-config'
 
 VAGRANTFILE_API_VERSION  = "2"
 VAGRANT_DEFAULT_PROVIDER = :virtualbox
-USERDATA                 = 'config/cloudinit.yaml.erb'
-
-def discovery_token
-  @discovery_token ||= get_discovery_token
-end
-
-def vagrant_command
-  ARGV[0]
-end
-
-def get_discovery_token
-  if coreos[:discovery_token].nil?
-    begin
-      coreos[:discovery_token] = Net::HTTP.get(URI.parse(coreos[:discovery_url]))
-    rescue Exception => e
-      raise "unable to get a token from the discovery service:" #
-    end
-  end
-  coreos[:discovery_token]
-end
-
-def cloudinit
-  @cloudinit ||= ERB.new( File.read(USERDATA), nil, '-' ).result( binding )
-end
-
-def coreos
-  @coreos ||= {}
-end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_check_update = true
   # step: do we need a discovery code?
   discovery_token if vagrant_command =~ /(up|provision)/
-  coreos[:coreos_instances].times.each.with_index(coreos[:instance_index]) do |x,index|
-    domain   = coreos[:domain]
-    hostname = "core#{index}"
-    config.vm.define hostname do |x|
-      x.vm.host_name = hostname
-      x.vm.box       = "coreos-#{coreos[:coreos_channel]}"
-      x.vm.box_url   = "#{coreos[:instance][:url]}" % [ coreos[:coreos_channel] ]
+  coreos[:coreos_cluster_size].times.each.with_index(coreos[:instance_index]) do |x,host_index|
+    # step: get the configuation and domain
+    @domain   = coreos[:domain]
+    @hostname = "core#{host_index}"
 
-      # VirtualBox provider
-      x.vm.provider :virtualbox do |v,override|
-        v.gui   = false
-        v.name  = hostname
-        coreos[:instance][:resources].each_pair do |key,value|
-          v.customize [ "modifyvm", :id, "--#{key}", value ]
+    # step: we generate the cloudinit now
+    user_data = ERB.new( userdata_file, nil, '-' ).result( binding )
+
+    config.vm.define @hostname do |x|
+      # step: set the generic stuff
+      x.vm.host_name = @hostname
+      x.vm.box       = 'coreos-%s' % [ coreos[:coreos_channel] ]
+      x.vm.box_url   = "#{virtualbox_cfg[:url]}" % [ coreos[:coreos_channel] ]
+
+      #
+      # Virtualbox related configuration
+      #
+      x.vm.provider :virtualbox do |virtualbox,override|
+        virtualbox.gui   = false
+        virtualbox.name  = @hostname
+        virtualbox_cfg[:resources].each_pair do |key,value|
+          virtualbox.customize [ "modifyvm", :id, "--#{key}", value ]
         end
-        override.vm.network :private_network, ip: "#{coreos[:network]}" % [ index ]
-        override.vm.provision :shell, :inline => cloudinit, :privileged => true
+
+        # step: the override for virtualbox
+        override.vm.network :private_network, ip: "#{coreos[:network]}" % [ host_index ]
+        override.vm.provision :shell, :inline => user_data, :privileged => true
       end
 
-      # AWS Provider
+      #
+      # Amazon EC2 related configuration
+      #
       x.vm.provider :aws do |aws, override|
+        # the credentials are pull from environment variables only
         aws.access_key_id     = ENV['AWS_ACCESS_KEY']
         aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-        aws.region            = ENV['AWS_REGION'] || "eu-west-1"
-        aws.instance_type     = 'm1.small'
 
-        aws.subnet_id         = ec2[:subnet_id] if ec2[:subnet_id]
-        aws.availability_zone = ec2[:availability_zone] if ec2[:availability_zone]
-
-        aws.tags = {
+        aws.region            = aws_cfg[:region] || 'eu-west-1'
+        aws.instance_type     = aws_cfg[:flavor] || 'm1.small'
+        aws.subnet_id         = aws_cfg[:subnet_id]
+        aws.availability_zone = aws_cfg[:availability_zone] if aws_cfg[:availability_zone]
+        aws.user_data         = user_data
+        aws.tags              = {
           'Name' => @hostname,
-          'Type' => "CoreOS"
+          'Type' => 'CoreOS'
         }
 
-        # configuration related to regions
-        #aws.region_config "us-east-1" do |region|
-        #  region.ami          = 'ami-3e750856'
-        #  region.keypair_name = 'default'
-        #end
+        aws.region_config 'us-east-1' do |region|
+          region.ami          = 'ami-3e750856'
+          region.keypair_name = 'default'
+        end
 
-        aws.region_config "eu-west-1" do |region|
+        aws.region_config 'eu-west-1' do |region|
           region.ami          = 'ami-e76dec90'
           region.keypair_name = 'default'
         end
-        aws.user_data         = cloudinit
+
+
 
         override.vm.box       = 'dummy'
-        override.ssh.username = 'root'
+        override.ssh.username = 'core'
       end
     end
   end
