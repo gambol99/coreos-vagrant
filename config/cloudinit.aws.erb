@@ -28,13 +28,28 @@ coreos:
   fleet:
     public-ip: $private_ipv4
   units:
-    - name: media-ephemeral.mount
+    - name: format-ephemeral.service
       command: start
       content: |
+        [Unit]
+        Description=Formats the ephemeral drive
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/sbin/wipefs -f /dev/xvdb
+        ExecStart=/usr/sbin/mkfs.btrfs -f /dev/xvdb
+    - name: var-lib-docker.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mount ephemeral to /var/lib/docker
+        Requires=format-ephemeral.service
+        After=format-ephemeral.service
+        Before=docker.service
         [Mount]
         What=/dev/xvdb
-        Where=/media/ephemeral
-        Type=ext3
+        Where=/var/lib/docker
+        Type=btrfs
     - name: etcd.service
       command: start
     - name: fleet.service

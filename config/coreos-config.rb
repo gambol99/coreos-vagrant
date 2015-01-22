@@ -61,6 +61,7 @@ end
 def get_discovery_token
   if coreos[:discovery_token].nil?
     begin
+      # step: lets check if a discovery token exists on file
       coreos[:discovery_token] = Net::HTTP.get(URI.parse(coreos[:discovery_url]))
     rescue Exception => e
       raise "unable to get a token from the discovery service:" #
