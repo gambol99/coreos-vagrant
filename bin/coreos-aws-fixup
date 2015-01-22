@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2015-01-22 11:19:23 +0000 (Thu, 22 Jan 2015)
+#
+#  vim:ts=2:sw=2:et
+#
+./bin/coreos-fixup aws

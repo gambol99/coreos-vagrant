@@ -17,6 +17,7 @@ write_files:
     permissions: 0644
     owner: root
     content: |
+      127.0.0.1       localhost.<%=coreos[:domain]%> localhost
       $private_ipv4   <%=@hostname%>.<%=coreos[:domain]%> <%=@hostname%>
 
 coreos:

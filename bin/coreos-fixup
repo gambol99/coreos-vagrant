@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2015-01-22 11:19:34 +0000 (Thu, 22 Jan 2015)
+#
+#  vim:ts=2:sw=2:et
+#
+SLEEP_TIME=10
+
+case "$1" in
+  aws)  CLOUDINIT="--from-metadata-service=true"
+        ;;
+  openstack)
+        CLOUDINIT="--from-file=/run/cloud-config.yml"
+        ;;
+  *)    CLOUDINIT="--from-file=/var/lib/coreos-vagrant/vagrantfile-user-data"
+        ;;
+esac
+
+say() {
+  echo "** $@"
+}
+
+coreos_setup() {
+  for machine in `vagrant status | grep '^core' | grep running | cut -d' ' -f1`; do
+    say "Ensure CoreOS cluster is setup correctly on ${machine}"
+    vagrant ssh ${machine} -c "sudo /usr/bin/coreos-cloudinit ${CLOUDINIT}" >/dev/null 2>/dev/null
+  done
+}
+
+setup() {
+  say "Ensuring the state of the cluster"
+  coreos_setup
+  say "Going to sleep for ${SLEEP_TIME} seconds"
+  sleep ${SLEEP_TIME}
+  say "Listing the CoreOS machines"
+  vagrant ssh core101 -c "fleetctl list-machines"
+}
+
+case $1 in
+  cluster)    coreos_setup;;
+  *)          setup;;
+esac
+

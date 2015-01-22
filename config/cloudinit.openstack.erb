@@ -1,0 +1,113 @@
+#cloud-config
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-10-16 10:24:42 +0100 (Thu, 16 Oct 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+
+write_files:
+  - path: /run/cloud-config.yml
+    permissions: '0644'
+    content: |
+      #cloud-config
+      coreos:
+        update:
+          reboot-strategy: etcd-lock
+        etcd:
+          discovery: https://discovery.etcd.io/<%=discovery_token%>
+          # multi-region deployments, multi-cloud deployments, and droplets without
+          # private networking need to use $_private_ipv4
+          addr: $_private_ipv4:4001
+          peer-addr: $_private_ipv4:7001
+        fleet:
+          # used for fleetctl ssh command
+          public-ip: $_private_ipv4
+        units:
+          - name: etcd.service
+            command: start
+          - name: fleet.service
+            command: start
+  - path: /run/setup-environment.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/bash
+
+      ENV="/etc/environment"
+
+      # Test for RW access to $1
+      touch $ENV
+      if [ $? -ne 0 ]; then
+          echo exiting, unable to modify: $ENV
+          exit 1
+      fi
+
+      # Setup environment target
+      sed -i -e '/^COREOS_PUBLIC_IPV4=/d' \
+          -e '/^COREOS_PRIVATE_IPV4=/d' \
+          "${ENV}"
+
+      # We spin loop until the nova-agent sets up the IP addresses
+      function get_ip () {
+          IF=$1
+          IP=
+          while [ 1 ]; do
+              IP=$(ifconfig $IF | awk '/inet / {print $2}')
+              if [ "$IP" != "" ]; then
+                  break
+              fi
+              sleep .1
+          done
+          echo $IP
+      }
+      # Echo results of IP queries to environment file as soon as network interfaces
+      # get assigned IPs
+      echo COREOS_PUBLIC_IPV4=$(get_ip eth0) >> $ENV # Also assigned to same IP
+      echo COREOS_PRIVATE_IPV4=$(get_ip eth0) >> $ENV
+coreos:
+  units:
+    - name: setup-environment.service
+      command: start
+      runtime: true
+      content: |
+        [Unit]
+        Description=Setup environment with private (and public) IP addresses
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/run/setup-environment.sh
+    - name: second-stage-cloudinit.service
+      runtime: true
+      command: start
+      content: |
+        [Unit]
+        Description=Run coreos-cloudinit with actual cloud-config after environment has been set up
+        Requires=setup-environment.service
+        After=setup-environment.service
+        Requires=user-cloudinit-proc-cmdline.service
+        After=user-cloudinit-proc-cmdline.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        EnvironmentFile=/etc/environment
+        ExecStartPre=/usr/bin/sed -i 's/\$_private/$private/g' /run/cloud-config.yml
+        ExecStart=/usr/bin/coreos-cloudinit --from-file=/run/cloud-config.yml
+
+manage-resolv-conf: true
+
+hostname: <%=@hostname%>.<%=coreos[:domain]%>
+resolv_conf:
+  nameservers: [ '8.8.8.8' ]
+  searchdomains:
+    - <%=coreos[:domain]%>
+  domain: <%=coreos[:domain]%>
+  options:
+    rotate: true
+    timeout: 1
+
+ssh_authorized_keys:
+  <%- coreos[:ssh_authorized_keys].each do |key| -%>
+  - <%= key %>
+  <%- end -%>

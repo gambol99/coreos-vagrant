@@ -13,6 +13,5 @@ One of the main benefits of CoreOS - the cluster setup and indeed configuration 
 
 Occasionally and i'm not sure if it's me, the etcd discovery endpoint or CoreOS, but on occasion some of the boxes don't register with the discovery service (discovery.coreos.com); there's a simple script in the service/ directory to auto fix this. Effectively all it does it rerun the cloudinit setup.
 
-  $ service/coreos-fixup
-  # check the list again
-  $ fleetctl list-machines
+  $ bin/coreos-{virtualbox | aws | openstack}-fixup
+
