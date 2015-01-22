@@ -32,11 +32,6 @@ write_files:
       DEFAULT_APP=unknown
       DEFAULT_NAME=unknown
 
-ssh_authorized_keys:
-  <%- coreos[:ssh_authorized_keys].each do |key| -%>
-  - <%= key %>
-  <%- end -%>
-
 coreos:
   etcd:
     discovery: <%=discovery_token%>

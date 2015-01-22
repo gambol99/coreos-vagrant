@@ -2,6 +2,7 @@
 
 FLEETCTL_ENDPOINT="http://10.0.1.101:4001"
 FLEETCTL="fleetctl"
+SLEEP_TIME=10
 
 say() {
   echo "** $@"
@@ -10,8 +11,8 @@ say() {
 coreos_setup() {
   for machine in `vagrant status | grep '^core' | cut -d' ' -f1`; do
     say "Ensure CoreOS cluster is setup correctly"
-    vagrant ssh $machine -c "sudo /usr/bin/coreos-cloudinit --from-file=/var/lib/coreos-vagrant/vagrantfile-user-data" >/dev/null
-  done 
+    vagrant ssh ${machine} -c "sudo /usr/bin/coreos-cloudinit --from-file=/var/lib/coreos-vagrant/vagrantfile-user-data" >/dev/null
+  done
 }
 
 setup() {
@@ -19,11 +20,13 @@ setup() {
   vagrant up
   say "Ensuring the state of the cluster"
   coreos_setup
+  say "Sleeping for ${SLEEP_TIME} seconds"
+  sleep ${SLEEP_TIME}
   say "Listing the CoreOS machines"
-  fleetctl -endpoint=$FLEETCTL_ENDPOINT list-machines
+  fleetctl -endpoint=${FLEETCTL_ENDPOINT} list-machines
 }
 
-case $1 in 
+case $1 in
   cluster)    coreos_setup;;
   *)          setup;;
 esac
