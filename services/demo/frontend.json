@@ -19,8 +19,8 @@
     "NAME": "frontend",
     "ENVIRONMENT": "prod",
     "SERVICE_80_NAME": "frontend_http",
-    "SERVICE_443_NAME": "frontend_https"
+    "SERVICE_443_NAME": "frontend_https",
     "VS_80_BACKEND_ID": "frontend_http",
-    "VS_443_BACKEND_ID": "frontend_https",
+    "VS_443_BACKEND_ID": "frontend_https"
   }
 }

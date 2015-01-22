@@ -1,0 +1,54 @@
+#cloud-config
+#
+#   Author: Rohith (gambol99@gmail.com)
+#   Date: 2014-10-16 10:24:42 +0100 (Thu, 16 Oct 2014)
+#
+#  vim:ts=2:sw=2:et
+#
+hostname: <%=@hostname%>.<%=coreos[:domain]%>
+
+ssh_authorized_keys:
+  <%- coreos[:ssh_authorized_keys].each do |key| -%>
+  - <%= key %>
+  <%- end -%>
+
+write_files:
+  - path: /etc/hosts
+    permissions: 0644
+    owner: root
+    content: |
+      $private_ipv4   <%=@hostname%>.<%=coreos[:domain]%> <%=@hostname%>
+
+coreos:
+  etcd:
+    discovery: <%=discovery_token%>
+    addr: $private_ipv4:4001
+    peer-addr: $private_ipv4:7001
+  fleet:
+    public-ip: $private_ipv4
+  units:
+    - name: media-ephemeral.mount
+      command: start
+      content: |
+        [Mount]
+        What=/dev/xvdb
+        Where=/media/ephemeral
+        Type=ext3
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: docker-tcp.socket
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Docker Socket for the API
+
+        [Socket]
+        ListenStream=2375
+        Service=docker.service
+        BindIPv6Only=both
+
+        [Install]
+        WantedBy=sockets.target

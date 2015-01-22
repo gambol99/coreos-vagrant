@@ -7,15 +7,22 @@ cat <<EOF >/var/lib/coreos-vagrant/vagrantfile-user-data
 #
 #  vim:ts=2:sw=2:et
 #
+hostname: <%=@hostname%>
+resolv_conf:
+  nameservers: [ 'DNS_SERVICE_IP_ADDRESS_CHANGE_ME' ]
+  searchdomains:
+    - <%=coreos[:domain]%>
+  domain: <%=coreos[:domain]%>
+  options:
+    rotate: true
+    timeout: 1
+
 write_files:
   - path: /etc/hosts
     permissions: 0444
     owner: root
     content: |
       10.0.1.112    hub101 hub
-      10.0.1.101    core101
-      10.0.1.102    core102
-      10.0.1.103    core102
   - path: /etc/coreos.environment
     permissions: 0444
     owner: root
@@ -24,6 +31,11 @@ write_files:
       DEFAULT_ENVIRONMENT=prod
       DEFAULT_APP=unknown
       DEFAULT_NAME=unknown
+
+ssh_authorized_keys:
+  <%- coreos[:ssh_authorized_keys].each do |key| -%>
+  - <%= key %>
+  <%- end -%>
 
 coreos:
   etcd:

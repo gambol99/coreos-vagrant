@@ -1,6 +1,6 @@
 {
-  "id": "/product/redis/stats",
-  "instances": 2,
+  "id": "/product/redis/stats/partition/1",
+  "instances": 1,
   "cpus": 0.1,
   "mem": 128,
   "constraints": [["hostname", "UNIQUE"]],
@@ -18,6 +18,6 @@
   "env": {
     "NAME": "stats",
     "ENVIRONMENT": "prod",
-    "SERVICE_6379_NAME": "stats"
+    "SERVICE_6379_NAME": "stats-p1"
   }
 }
