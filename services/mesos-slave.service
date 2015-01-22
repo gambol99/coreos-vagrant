@@ -20,8 +20,8 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /lib64/libdevmapper.so.1.02:/lib/libdevmapper.so.1.02:ro \
     mesosphere/mesos-slave:0.20.1 \
-    --hostname=$(/usr/bin/ip -o -4 addr list eth0 | grep global | awk \'{print $4}\' | cut -d/ -f1) \
-    --ip=$(/usr/bin/ip -o -4 addr list eth0 | grep global | awk \'{print $4}\' | cut -d/ -f1) \
+    --hostname=$(/usr/bin/ip -o -4 addr list eth1 | grep global | awk \'{print $4}\' | cut -d/ -f1) \
+    --ip=$(/usr/bin/ip -o -4 addr list eth1 | grep global | awk \'{print $4}\' | cut -d/ -f1) \
     --containerizers=docker \
     --master=zk://`etcdctl get /bootstrap/mesos/zookeeper`:2181/mesos \
     --work_dir=/var/lib/mesos/slave \

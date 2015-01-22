@@ -80,6 +80,8 @@ I've noticed that on occasion the cloudinit doesnt work correctly; To manually p
     core@core103 # /usr/bin $ curl localhost:4001/v1/machines; echo
     http://10.0.1.101:4001, http://10.0.1.102:4001, http://10.0.1.103:4001
     core@core103 # /usr/bin $
+
+    Note: some of the services under /services reference the interface; by default i leave these on Vagrant i.e. eth1 .. but for other platforms you'll need to change this to eth0 (like mesos, embassy, marathon etc)
     
 #### **Contributing**
 
