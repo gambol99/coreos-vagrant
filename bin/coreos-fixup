@@ -23,7 +23,7 @@ say() {
 
 coreos_setup() {
   for machine in `vagrant status | grep '^core' | grep running | cut -d' ' -f1`; do
-    say "Ensure CoreOS cluster is setup correctly on ${machine}"
+    say "Re-running the cloudinit process on ${machine}"
     vagrant ssh ${machine} -c "sudo /usr/bin/coreos-cloudinit ${CLOUDINIT}" >/dev/null 2>/dev/null
   done
 }

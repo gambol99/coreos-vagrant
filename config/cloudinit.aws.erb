@@ -19,6 +19,17 @@ write_files:
     content: |
       127.0.0.1       localhost.<%=coreos[:domain]%> localhost
       $private_ipv4   <%=@hostname%>.<%=coreos[:domain]%> <%=@hostname%>
+  - path: /etc/ntp.conf
+    content: |
+      # Common pool
+      server 0.europe.pool.ntp.org
+      server 1.europe.pool.ntp.org
+
+      # - Allow only time queries, at a limited rate.
+      # - Allow all local queries (IPv4, IPv6)
+      restrict default nomodify nopeer noquery limited kod
+      restrict 127.0.0.1
+      restrict [::1]
 
 coreos:
   etcd:
@@ -68,3 +79,13 @@ coreos:
 
         [Install]
         WantedBy=sockets.target
+    - name: settimezone.service
+      command: start
+      content: |
+        [Unit]
+        Description=Set the timezone
+
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone UTC
+        RemainAfterExit=yes
+        Type=oneshot

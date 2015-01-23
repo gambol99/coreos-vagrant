@@ -13,6 +13,8 @@
   :discovery_token     => nil,
   :discovery_url       => "https://discovery.etcd.io/new",
   :domain              => "domain.com",
+  # Obvisouly change these for you own keys - this ONLY effects the openstack / aws providers
+  # as virtualbox keys are left untouched
   :ssh_authorized_keys => [
     'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7K4+mLac9yexhMY5N+XtQIbTFHxVJJLlpm4/DJw3HET25AZpy7AeBDhQwgjYHd+saPUuocxNkztmYelgXkIWhIwWn2vODt0wBryt1skNs07mVm+jPawNRrEs9q+uVVAn64P+2WmyJVgsFWOkKkrnH/sypJnLSNk8WDdpqD6JLz4fsy9+zinMh7k7Xo5UfBq78pVfUS9aVlMpOj3NmdD1UpxbIBsC+ttlVR43rqrnySK9zhzezYot4PlA1LInnw8E7o8TxnJ6z2xXx5PsNMbjLW94OjpjsbvbKsKnLunA2LMc65HtOAVdPqHTWxbMuSlKjChiWJDjujdjVID8FpW09 imported-openssh-key',
     'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD2TMUDqvIjPtfRsbUkqADC9Y47pWYAPGfaH5FkGijm5AtYIZI465/IHR517Ofbd+eeLrBp5VyAVUYcUyZOfLvINIYBcAMZDuzMZV3hQYiCj6whnPzq5ItAgd7KJUKYKWgAUvA0dfacM5STe7woH4Bg9L7kExs9q/1GonYynUBkOdmX6rP8SdG2kfcauvIS7YQkdUW+oymb8kge4zVd/WuqjId95wGHhkFzq/4CeqFFCd/dOjW/61yTp/E6Ms8Gd3NwNLD7l60AulMqRkxHJnMH3rAGSyhyvhLFqwpcc5/5wpaibsAW0oKwCEn/FC12WythVy+g4HAIwHKHCDRVPzqH jest@starfury'
