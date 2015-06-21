@@ -4,6 +4,6 @@
 #
 #  vim:ts=2:sw=2:et
 #
-FROM eboraas/apache-php
+FROM tutum/apache-php
 MAINTAINER <gambol99@gmail.com>
-ADD ./hostname.php /var/www/hostname.php
+ADD ./hostname.php /app/hostname.php
